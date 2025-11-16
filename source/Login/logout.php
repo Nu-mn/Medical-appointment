@@ -11,6 +11,6 @@ if (ini_get("session.use_cookies")) {
     );
 }
 
-header("Location: /SOA_GK/source/index.php");
+header("Location: /source/index.php");
 exit();
 ?>

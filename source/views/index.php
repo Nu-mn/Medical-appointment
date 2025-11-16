@@ -35,12 +35,9 @@ require_once __DIR__ . '/../models/user_service/UserService.php';
           if (isset($_SESSION["id"])) {
 
             // NAVIGATION
-            include __DIR__ . '/pages/nav.php';
             //main
             include __DIR__ . '/pages/main.php';
     
-                     
-            
         } else {
             header("Location: ../index.php");
             exit();

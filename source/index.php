@@ -2,7 +2,7 @@
 session_start();
 
 define('BASE_PATH', __DIR__);
-define('BASE_URL', '/SOA_GK/source');
+define('BASE_URL', '/source');
 
 if (isset($_SESSION["id"])) {
     // Nếu đã đăng nhập → chuyển đến trang chính

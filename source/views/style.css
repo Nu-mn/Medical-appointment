@@ -216,92 +216,6 @@
     color: white;
 }
 
-/* Trạng thái sidebar trên màn hình nhỏ */
-@media screen and (max-width: 768px) {
-    #mySidebar {
-        width: 60px;
-    }
-
-    #main {
-        margin-left: 60px;
-    }
-
-    .sidebar-user img {
-        width: 40px;
-        height: 40px;
-        margin-bottom: 5px;
-        margin-left: auto;
-        margin-right: auto;
-        display: block;
-    }
-
-    .sidebar-user h3,
-    .sidebar-user span {
-        display: none;
-    }
-
-    .item-sidebar {
-        display: none;
-    }
-
-    .sidebar .link {
-        justify-content: center;
-        padding: 10px;
-    }
-
-    .sidebar li a span,
-    .sidebar a span {
-        margin-right: 0;
-        font-size: 1.2rem;
-    }
-
-    .rightnav {
-        display: none;
-    }
-
-    .openclose {
-        margin: 3px 0;
-        padding: 3px;
-    }
-
-    .openclose i {
-        font-size: 0.9rem;
-    }
-}
-
-/* Trạng thái sidebar trên màn hình lớn */
-@media screen and (min-width: 769px) {
-    #mySidebar {
-        width: 220px;
-    }
-
-    #main {
-        margin-left: 235px;
-    }
-
-    #main[style*="margin-left: 0"] {
-        margin-left: 0;
-    }
-
-    .sidebar-user img {
-        width: 110px;
-        height: 110px;
-    }
-
-    .sidebar-user h3,
-    .sidebar-user span {
-        display: block;
-    }
-
-    .item-sidebar {
-        display: block;
-    }
-
-    .logout {
-        display: none;
-    }
-}
-
 /* Main content */
 .content {
     height: 100%;
@@ -316,20 +230,6 @@
     margin-bottom: 18px;
 }
 
-.main {
-    margin-top: 46px;
-}
-
-.main-content {
-    padding: 1.5rem;
-    height: auto;
-}
-
-#main {
-    margin-left: 235px;
-    transition: margin-left 0.5s;
-    padding: 0;
-}
 
 .page-header {
     background-color: rgb(255, 255, 255);
@@ -355,7 +255,7 @@ input {
     flex-grow: 1;
 }
 
-#main .cards {
+ .cards {
     display: flex;
     gap: 15px;
     flex-wrap: wrap;
@@ -852,13 +752,6 @@ table {
     color: #ffa551;
 }
 
-.stats-main-content {
-    margin-left: 235px;
-    padding: 1.5rem;
-    min-height: 100vh;
-    background: linear-gradient(135deg, #f5f7fa 0%, #e4e9f0 100%);
-    transition: margin-left 0.5s;
-}
 
 .stats-page-header {
     display: flex;
@@ -936,22 +829,7 @@ table {
     letter-spacing: 0.5px;
 }
 
-@media screen and (max-width: 768px) {
-    .stats-main-content {
-        margin-left: 60px;
-        padding: 0.8rem;
-    }
 
-    .stats-page-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.8rem;
-    }
-
-    .stats-orders {
-        grid-template-columns: 1fr;
-    }
-}
 
 .profile-container {
     background-color: white;
