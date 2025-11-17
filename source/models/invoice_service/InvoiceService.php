@@ -35,21 +35,34 @@ class InvoiceService {
 
     // Lấy lịch sử hóa đơn
     public function getInvoiceHistory($userId) {
+        // Lấy tất cả hóa đơn của user
         $stmt = $this->conn->prepare("
-            SELECT i.invoice_id, i.booking_id, i.payment_id, i.total_amount, i.issued_date, 
-                   GROUP_CONCAT(CONCAT(d.service_name, ':', d.cost) SEPARATOR ', ') AS services
-            FROM invoices i
-            LEFT JOIN invoice_detail d ON i.invoice_id = d.invoice_id
-            WHERE i.user_id = ? 
-            GROUP BY i.invoice_id
-            ORDER BY i.issued_date DESC
+            SELECT invoice_id, booking_id, payment_id, total_amount, issued_date
+            FROM invoices
+            WHERE user_id = ?
+            ORDER BY issued_date DESC
         ");
-       
         $stmt->bind_param("i", $userId);
         $stmt->execute();
-        $result = $stmt->get_result();
-        return $result->fetch_all(MYSQLI_ASSOC);
+        $invoicesResult = $stmt->get_result();
+        $invoices = $invoicesResult->fetch_all(MYSQLI_ASSOC);
+
+        // Lấy chi tiết dịch vụ cho từng hóa đơn
+        foreach ($invoices as &$inv) {
+            $stmtDetail = $this->conn->prepare("
+                SELECT service_name, cost
+                FROM invoice_detail
+                WHERE invoice_id = ?
+            ");
+            $stmtDetail->bind_param("i", $inv['invoice_id']);
+            $stmtDetail->execute();
+            $detailsResult = $stmtDetail->get_result();
+            $inv['services'] = $detailsResult->fetch_all(MYSQLI_ASSOC);
+        }
+
+        return $invoices;
     }
+
 
     
 }

@@ -10,6 +10,19 @@ $conn = connectDB("invoice_db");
 // Service
 $service = new InvoiceService($conn);
 
+// Giả sử có biến $maintenance_mode kiểm tra trạng thái service
+$maintenance_mode = false; // true nếu đang bảo trì
+
+if ($maintenance_mode) {
+    // Trả về thông báo bảo trì
+    http_response_code(503); // 503 Service Unavailable
+    echo json_encode([
+        "status" => "maintenance",
+        "message" => "Service này đang bảo trì, vui lòng thử lại sau."
+    ]);
+    exit;
+}
+
 // Request
 $method = $_SERVER['REQUEST_METHOD'];
 $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
@@ -32,12 +45,12 @@ if ($method === "POST" && str_ends_with($path, "/invoice/create")) {
     echo json_encode($result);
 
 } elseif ($method === "GET" && str_ends_with($path, "/invoice/history")) {
-    if (!isset($input['user_id'])) {
+    if (!isset($_GET['user_id'])) {
         http_response_code(400);
         echo json_encode(["error" => "user_id required"]);
         exit;
     }
-    $result = $service->getInvoiceHistory($input['user_id']);
+    $result = $service->getInvoiceHistory($_GET['user_id']);
     echo json_encode($result);
 
 } else {

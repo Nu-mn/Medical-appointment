@@ -17,22 +17,22 @@ switch ($method) {
 
         // LẤY BÁC SĨ THEO CHUYÊN KHOA
         // Endpoint: /doctor/by-specialization
-        if (str_ends_with($path, "/doctor/by-specialization") && isset($input['specialization_id'])) {
-            echo json_encode($service->getDoctorsBySpecialization($input['specialization_id']));
+        if (str_ends_with($path, "/doctor/by-specialization") && isset($_GET['specialization_id'])) {
+            echo json_encode($service->getDoctorsBySpecialization($_GET['specialization_id']));
             break;
         }
 
         // LẤY LỊCH BÁC SĨ
         // Endpoint: /doctor/schedule
-        if (str_ends_with($path, "/doctor/schedule") && isset($input['doctor_id'])) {
-            echo json_encode($service->getSchedule($input['doctor_id']));
+        if (str_ends_with($path, "/doctor/schedule") && isset($_GET['doctor_id'])) {
+            echo json_encode($service->getSchedule($_GET['doctor_id']));
             break;
         }
 
         // KIỂM TRA SLOT CÒN HAY HẾT
         // Endpoint: /doctor/check
-        if (str_ends_with($path, "/doctor/check") && isset($input['doctor_id'], $input['date'], $input['session'])) {
-            $available = $service->checkSlot($input['doctor_id'], $input['date'], $input['session']);
+        if (str_ends_with($path, "/doctor/check") && isset($_GET['doctor_id'], $_GET['date'], $_GET['session'])) {
+            $available = $service->checkSlot($_GET['doctor_id'], $_GET['date'], $_GET['session']);
             echo json_encode($available);
             break;
         }

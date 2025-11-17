@@ -16,7 +16,7 @@
             <ul class="navbar-nav mx-auto mb-2 mb-lg-0 fw-semibold">
                 <li class="nav-item"><a class="nav-link px-3" href="index.php?nav=home">Trang chủ</a></li>
                 <li class="nav-item"><a class="nav-link px-3" href="index.php?nav=appointment">Đặt lịch</a></li>
-                <li class="nav-item"><a class="nav-link px-3" href="index.php?nav=form">Phiếu khám</a></li>
+                <li class="nav-item"><a class="nav-link px-3" href="index.php?nav=invoice">Hóa đơn</a></li>
                 <li class="nav-item"><a class="nav-link px-3" href="index.php?nav=doctors">Bác sĩ</a></li>
                 <li class="nav-item"><a class="nav-link px-3" href="index.php?nav=patients">Hồ sơ</a></li>
                 <li class="nav-item"><a class="nav-link px-3" href="#">Liên hệ</a></li>
