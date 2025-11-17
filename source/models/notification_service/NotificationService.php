@@ -29,10 +29,10 @@ class NotificationService {
         return substr($name, 0, 1) . str_repeat("*", max(1, strlen($name) - 1)) . "@" . $domain;
     }
 
-    public function sendEmail($userId, $to, $subject, $body, $type, $metadata = []) {
+    public function sendEmail($userId, $to, $subject, $body) {
         // Save notify
         $stmt = $this->conn->prepare("
-            INSERT INTO notifications (user_id, tiltle, message, status) 
+            INSERT INTO notifications (user_id, title, message, status) 
             VALUES (?, ?, ?, 'pending')
         ");
         $stmt->bind_param("iss", $userId, $subject, $body);
@@ -43,7 +43,7 @@ class NotificationService {
             $this->mailer->CharSet = 'UTF-8';
             $this->mailer->isHTML(true);
             // Send email
-            $this->mailer->setFrom('itnotformehihi@gmail.com', 'Payment System');
+            $this->mailer->setFrom('itnotformehihi@gmail.com', 'Booking Hospital System');
             $this->mailer->addAddress($to);
             $this->mailer->Subject = $subject;
             $this->mailer->Body = $body;
@@ -76,5 +76,16 @@ class NotificationService {
                 "masked_email" => $this->maskEmail($to)
             ];
         }
+    }
+
+    public function sendPaymentEmail($userId, $to, $patientName, $appointmentDate, $amount) {
+        $subject = "Xác nhận thanh toán lịch khám";
+        $body = '
+            <p>Bạn đã thanh toán thành công hóa đơn đặt lịch khám. Đây là phiếu khám bệnh của bạn. \n
+            Vui lòng mang theo phiếu này khi đến khám tại bệnh viện. Xin chân thành cảm ơn!</p>
+            <html>
+                
+            </html>';
+        return $this->sendEmail($userId, $to, $subject, $body);
     }
 }
