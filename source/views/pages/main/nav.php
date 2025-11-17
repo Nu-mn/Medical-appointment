@@ -4,8 +4,8 @@
 <nav class="navbar navbar-expand-lg bg-white shadow-sm py-3">
     <div class="container">
         <a class="navbar-brand fw-bold text-primary" href="#" title="Về trang chủ">
-            <img src="../images/logo.ico" alt="Logo" style="width:40px;" > 
-           BookingHospital
+            <img src="../images/pharmacy.png" alt="Logo" style="width:40px;" > 
+            BookingHospital
         </a>
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
