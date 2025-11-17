@@ -1,18 +1,4 @@
-<?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
 
-if (!isset($_SESSION["id"])) {
-    header("Location: ../index.php");
-    exit();
-}
-
-require_once __DIR__ . '/../models/user_service/UserService.php';
-
-
-
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -32,16 +18,9 @@ require_once __DIR__ . '/../models/user_service/UserService.php';
 
 <body>
     <?php
-          if (isset($_SESSION["id"])) {
-
-            // NAVIGATION
-            //main
-            include __DIR__ . '/pages/main.php';
+          
+        include __DIR__ . '/pages/main.php';
     
-        } else {
-            header("Location: ../index.php");
-            exit();
-        }
     ?>
 </body>
 </html>

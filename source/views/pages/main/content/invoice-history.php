@@ -1,8 +1,8 @@
-<div class="main-content" id="main">
+
     <title>Lịch sử hóa đơn</title>
     <style>
-        body { font-family: Arial, sans-serif; background: #f5f6fa; margin: 0; padding: 20px; }
-        h1 { text-align: center; color: #2f3640; margin-bottom: 25px; }
+        body { font-family: Arial, sans-serif; background: #fbfbfbff; }
+        h1 { text-align: center; color: #2f3640; margin-bottom: 25px; margin-top: 20px;}
         /* Banner thông báo */
         #banner {
             display: none;
@@ -48,13 +48,13 @@
     <div class="invoice-list" id="invoiceList">
     <!-- Hóa đơn sẽ được render bằng JS -->
     </div>
-</div>
+
 
 
 <script>
 const invoiceList = document.getElementById("invoiceList");
 const banner = document.getElementById("banner");
-const userId = <?php echo isset($user_id) ? json_encode($user_id) : 'null'; ?>;
+const userId = <?php echo isset($user_id) ? json_encode($user_id) : 1; ?>;
 
 // Hàm hiển thị banner
 function showBanner(message, type = 'info') {
