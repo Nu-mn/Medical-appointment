@@ -41,7 +41,6 @@
                     <button id="go-to-step-2" class="btn btn-primary w-100 mt-4" onclick="chuyengiaodien('booking-step-1', 'booking-step-2')">TIẾP TỤC</button>
                 </div>
 
-                    <!-- Cập nhật hoặc thêm bệnh nhân -->
                 <div class="booking-step-2 d-none">
                     <h4>Danh sách hồ sơ</h4>
                     <div class="container mt-4">
@@ -106,6 +105,77 @@ function openDetail(patient_id, event) {
     btn.innerText = 'Đã chọn';
 
 }
+// Load danh sách chuyên khoa
+function loadSpecializations() {
+    fetch("http://localhost/medical-appointment/source/models/doctor_service/DoctorAPI.php/doctor/allspecializations")
+        .then(res => res.json())
+        .then(data => {
+            let select = document.getElementById("specialty");
+            select.innerHTML = `<option value="">-- Chọn chuyên khoa --</option>`;
+            
+            data.forEach(sp => {
+                select.innerHTML += `<option value="${sp.specialization_id}">${sp.name}</option>`;
+            });
+        });
+}
+
+loadSpecializations();
+
+document.getElementById("specialty").addEventListener("change", function() {
+    let id = this.value;
+    let doctorSelect = document.getElementById("doctor");
+
+    doctorSelect.innerHTML = `<option value="">-- Chọn bác sĩ --</option>`;
+
+    if(id === "") return;
+
+    fetch(`http://localhost/Medical-appointment/source/models/doctor_service/DoctorAPI.php/doctor/by-specialization?specialization_id=${id}`)
+        .then(res => res.json())
+        .then(data => {
+            data.forEach(doc => {
+                doctorSelect.innerHTML += `<option value="${doc.doctor_id}">${doc.full_name}</option>`;
+            });
+        });
+});
+
+let scheduleData = [];
+
+document.getElementById("doctor").addEventListener("change", function() {
+    let id = this.value;
+
+    document.getElementById("booking_date").value = "";
+    document.getElementById("time_slot").innerHTML = `<option value="">-- Chọn giờ khám --</option>`;
+
+    if(id === "") return;
+
+    fetch(`api.php/doctor/schedule?doctor_id=${id}`)
+        .then(res => res.json())
+        .then(data => {
+            scheduleData = data;
+
+            // Lấy danh sách ngày
+            let dates = [...new Set(data.map(item => item.date))];
+
+            let dateInput = document.getElementById("booking_date");
+            dateInput.setAttribute("min", dates[0]);
+            dateInput.setAttribute("max", dates[dates.length - 1]);
+
+            // Nếu chỉ muốn show những ngày có lịch, có thể dùng datalist (optional)
+        });
+});
+document.getElementById("booking_date").addEventListener("change", function() {
+    let date = this.value;
+    let slotSelect = document.getElementById("time_slot");
+
+    slotSelect.innerHTML = `<option value="">-- Chọn giờ khám --</option>`;
+
+    let slots = scheduleData.filter(s => s.date === date);
+
+    slots.forEach(s => {
+        let text = s.session === "morning" ? "Buổi sáng" : "Buổi chiều";
+        slotSelect.innerHTML += `<option value="${s.session}">${text}</option>`;
+    });
+});
 
 document.getElementById("confirm-booking").addEventListener("click", () => {
 
