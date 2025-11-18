@@ -14,8 +14,8 @@
         } elseif ($nav == 'appointment') {
             include __DIR__ . "/main/content/appointment.php";
 
-        } elseif ($nav == 'form') {
-            include __DIR__ . "/main/content/form.php";
+        } elseif ($nav == 'invoice') {
+            include __DIR__ . "/main/content/invoice-history.php";
 
         } elseif ($nav == 'doctors') {
             include __DIR__ . "/main/content/doctors.php";

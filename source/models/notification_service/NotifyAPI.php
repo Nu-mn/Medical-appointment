@@ -5,7 +5,7 @@
     require_once "NotificationService.php";
 
     // Connect DB
-    $conn = connectDB("notificationservice");
+    $conn = connectDB("notification_db");
 
     // Service
     $service = new NotificationService($conn);
@@ -22,16 +22,11 @@
             exit;
         }
 
-        $type = $input['type'] ?? 'general';
-        $metadata = $input['metadata'] ?? [];
-
         $result = $service->sendEmail(
             $input['user_id'],
             $input['to'],
             $input['subject'],
-            $input['body'],
-            $type,
-            $metadata
+            $input['body']
         );
 
         echo json_encode($result);
