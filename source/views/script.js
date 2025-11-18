@@ -79,3 +79,29 @@ function showToast(message, type = "info", duration = 5000) {
     }, duration);
 }
 
+
+function checkLogin(event, nav) {
+    event.preventDefault(); // ngăn link chuyển trang
+
+    // Kiểm tra tồn tại id
+    const userElement = document.getElementById('userId');
+    const isLoggedIn = userElement && userElement.innerText.trim() !== '';
+
+    if(!isLoggedIn) {
+        // Hiện popup yêu cầu đăng nhập
+        document.getElementById('loginPopup').style.display = 'flex';
+    } else {
+        // Nếu đã đăng nhập thì chuyển sang trang đặt lịch
+        window.location.href = 'index.php?nav=' + nav;
+    }
+}
+
+
+function closePopup() {
+    document.getElementById('loginPopup').style.display = 'none';
+}
+
+function loginNow() {
+    // Chuyển đến trang login
+    window.location.href = '../Login/login.php';
+}

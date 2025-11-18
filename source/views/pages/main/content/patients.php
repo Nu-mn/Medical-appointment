@@ -4,7 +4,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 if (!isset($_SESSION['id'])) {
-    header("Location: /medical-appointment/source/index.php");
+    header("Location: /source/index.php");
     exit();
 }
 

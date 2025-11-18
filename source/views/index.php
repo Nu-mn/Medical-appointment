@@ -1,4 +1,11 @@
+<?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
+require_once __DIR__ . '/../models/user_service/UserService.php';
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,10 +25,39 @@
 </head>
 
 <body>
+    <!-- Ẩn user_id nếu đã đăng nhập -->
+    <?php if(isset($_SESSION['id'])): ?>
+        <span id="userId" style="display:none;"><?php echo $_SESSION['id']; ?></span>
+    <?php endif; ?>
     <?php
           
         include __DIR__ . '/pages/main.php';
     
     ?>
+     <!-- Popup login -->
+    <div id="loginPopup" style="
+        display:none;
+        position:fixed;
+        top:0; left:0; right:0; bottom:0;
+        background:rgba(0,0,0,0.5);
+        justify-content:center;
+        align-items:center;
+        z-index:1000;
+    ">
+        <div style="
+            background:#DBEEFD;
+            padding:20px;
+            border-radius:8px;
+            width:300px;
+            text-align:center;
+            color: #1f1d1dff;
+        ">
+            <h5>Vui lòng đăng nhập</h5>
+            <p>Bạn cần đăng nhập để đặt lịch khám.</p>
+            <button class="btn btn-primary" onclick="loginNow()">Đăng nhập</button>
+            <button class="btn btn-secondary" onclick="closePopup()">Hủy</button>
+        </div>
+    </div>
+
 </body>
 </html>

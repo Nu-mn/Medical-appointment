@@ -58,7 +58,7 @@
                     <h3 class="mt-3">Đặt lịch thành công!</h3>
                     <p>Vui lòng thanh toán trong mục Phiếu khám.</p>
 
-                    <button onclick="location.href='index.php?nav=form'" class="btn btn-primary w-100 mt-4">
+                    <button onclick="location.href='index.php?nav=invoice-history'" class="btn btn-primary w-100 mt-4">
                         XEM LỊCH KHÁM
                     </button>
                 </div>

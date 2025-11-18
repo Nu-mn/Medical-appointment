@@ -22,7 +22,6 @@
 
         } elseif ($nav == 'patients') {
             include __DIR__ . "/main/content/patients.php";
-
         } elseif ($nav == 'contact') {
             include __DIR__ . "/main/content/contact.php";
         } elseif ($nav == 'hoso') {
