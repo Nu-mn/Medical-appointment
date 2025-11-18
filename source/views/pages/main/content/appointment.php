@@ -57,7 +57,7 @@
                     <h3 class="mt-3">Đặt lịch thành công!</h3>
                     <p>Vui lòng thanh toán trong mục Phiếu khám.</p>
 
-                    <button onclick="location.href='index.php?nav=invoice-history'" class="btn btn-primary w-100 mt-4">
+                    <button onclick="location.href='index.php?nav=invoice'" class="btn btn-primary w-100 mt-4">
                         XEM LỊCH KHÁM
                     </button>
                 </div>
@@ -133,7 +133,7 @@ document.getElementById("specialty").addEventListener("change", function() {
         .then(res => res.json())
         .then(data => {
             data.forEach(doc => {
-                doctorSelect.innerHTML += `<option value="${doc.doctor_id}">${doc.full_name}</option>`;
+                doctorSelect.innerHTML += `<option value="${doc.doctor_id}">${doc.doctor_name}</option>`;
             });
         });
 });
@@ -148,7 +148,7 @@ document.getElementById("doctor").addEventListener("change", function() {
 
     if(id === "") return;
 
-    fetch(`api.php/doctor/schedule?doctor_id=${id}`)
+    fetch(`http://localhost/Medical-appointment/source/models/doctor_service/DoctorAPI.php/doctor/schedule?doctor_id=${id}`)
         .then(res => res.json())
         .then(data => {
             scheduleData = data;
@@ -183,31 +183,37 @@ document.getElementById("confirm-booking").addEventListener("click", () => {
         alert("Vui lòng chọn hồ sơ bệnh nhân!");
         return;
     }
-    chuyengiaodien('booking-step-2', 'booking-step-3')
+
 
     const payload = {
-        specialty: document.getElementById("specialty").value,
+        specialization_id: document.getElementById("specialty").value,
         doctor_id: document.getElementById("doctor").value,
-        date: document.getElementById("booking_date").value,
-        time_slot: document.getElementById("time_slot").value,
-        patient_id: patient_id.value,
-        user_id: SESSION_USER_ID 
+        booking_date: document.getElementById("booking_date").value,
+        slot_time: document.getElementById("time_slot").value,
+        patient_id: data.patient_id,
+        amount: 100000,
+        status: "pending",
+        user_id: SESSION_USER_ID
     };
 
-    // fetch("api/booking/create.php", {
-    //     method: "POST",
-    //     body: JSON.stringify(payload)
-    // })
-    // .then(res => res.json())
-    // .then(r => {
-    //     if (r.success) {
-    //         // Hiện step 3
-    //         document.getElementById("booking-step-2").style.display = "none";
-    //         document.getElementById("booking-step-3").style.display = "block";
-    //     } else {
-    //         alert("Lỗi: " + r.message);
-    //     }
-    // })
+    fetch("http://localhost/medical-appointment/source/models/booking_service/BookingAPI.php", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+    })
+    .then(res => res.json())
+    .then(r => {
+        if (r.message) {
+             chuyengiaodien('booking-step-2', 'booking-step-3');
+        }
+    })
+    .catch(err => {
+        console.error("Fetch error:", err);
+        alert("Không thể đặt lịch. Kiểm tra API!");
+    });
+
 });
 </script>
 <script src="../models/patient_service/getPatient.js"></script>

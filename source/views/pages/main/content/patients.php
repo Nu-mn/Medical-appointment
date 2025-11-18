@@ -41,7 +41,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
                     <div class="row mb-3">
                     <div class="col-md-4 text-center">
-                        <img id="patient_avatar" src="/source/images/user.jpg" class="rounded-circle" width="120" height="120">
+                        <img id="patient_avatar" src="../images/user.jpg" class="rounded-circle" width="120" height="120">
                     </div>
                     <div class="col-md-6">
                         <h4 id="detail_full_name" class="fw-bold mb-1">Tên bệnh nhân</h4>
