@@ -10,7 +10,7 @@ if (!isset($error)) {
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>iBanking</title>
+    <title>BookingHospital</title>
     <link rel="icon" type="image/x-icon" href="images/logo.ico">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -18,29 +18,35 @@ if (!isset($error)) {
 </head>
 <body>
 <div class="header">
-    <h1>iBanking</h1>
+    <h1>BookingHospital</h1>
 </div>
 <div class="wrapper">
     <div class="container">
         <div class="col col-1">
-            <img src="pos.png" style="width: fit-content;">
-            <h3>Chào mừng bạn đến với <br> hệ thống iBanking</h3>
+            <img src="imageLogin.png" style="width: fit-content;">
+            <h3>Không có gì quý giá hơn là sức khỏe tốt. Đó chính là tài sản giá trị nhất của một con người</h3>
         </div>
         <div class="col col-2">
             <div class="login-form">
                 <form id="loginForm" method="POST" action="">
-                    <h2 class="title-form">LOGIN</h2>
+                    <h2 class="title-form">Đăng Nhập</h2>
                     <div class="input-box">
-                        <input name="username" type="text" placeholder="Username" required>
+                        <input name="phone" type="text" placeholder="Nhập số điện thoại" required>
                         <i class='fa fa-user'></i>
                     </div>
                     <div class="input-box">
-                        <input name="password" type="password" placeholder="Password" required>
+                        <input name="password" type="password" placeholder="Nhập mật khẩu" required>
                         <div id="eye">
                             <i class='fa fa-eye'></i>
                         </div>
                     </div>
-                    <input name="login" type="submit" class="button" value="Login">
+                    <input name="login" type="submit" class="button" value="Đăng nhập">
+                    <h5 style="color: #fefefeff; text-align: center; margin-top: 15px;">Or</h5>
+                   <h3 class="no-account">
+                        Chưa có tài khoản?  
+                            <a href="register.php">Đăng ký</a>
+                    </h3>
+
                   <?php if ($error): ?>
                         <p style="color:#FA8A5A; margin: 10px 10px;"><?= htmlspecialchars($error) ?></p>
                     <?php endif; ?>
@@ -59,14 +65,14 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("loginForm").addEventListener("submit", async function (e) {
         e.preventDefault();
 
-        const username = document.querySelector("input[name='username']").value.trim();
+        const phone = document.querySelector("input[name='phone']").value.trim();
         const password = document.querySelector("input[name='password']").value.trim();
 
         try {
             const response = await fetch("plogin.php", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ username, password })
+                body: JSON.stringify({ phone, password })
             });
 
             const data = await response.json();
@@ -76,7 +82,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 window.location.href = "../views/index.php";
             } else {
                 // ⚠️ Sai username hoặc mật khẩu -> hiện popup cảnh báo
-                showToast(data.message || "Sai tên đăng nhập hoặc mật khẩu. Vui lòng thử lại!", "warning");
+                showToast(data.message || "Sai số điện thoại hoặc mật khẩu. Vui lòng thử lại!", "warning");
             }
         } catch (error) {
             // ⚠️ Lỗi hệ thống, không in console, chỉ hiện thông báo
@@ -139,4 +145,31 @@ function showToast(message, type = "info", duration = 3000) {
 .toast.error   { background-color: rgba(229, 79, 79, 1); } /* đỏ */
 .toast.warning { background-color: #ffffffff; color: #000; } /* vàng */
 .toast.info    { background-color: #17a2b8; } /* xanh dương nhạt */
+
+.no-account {
+    margin-top: 10px;
+    color: #000000ff;
+    text-align: center;
+    font-size: 15px;
+}
+
+.no-account a {
+    color: #fc5a4e;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.no-account a:hover {
+    text-decoration: underline;
+}
+
+.input-box {
+    position: relative;
+    width: 100%;
+    height: 50px;
+    margin: 27px 0;
+}
+
+
 </style>
+

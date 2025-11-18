@@ -6,7 +6,7 @@
 }
 
 body {
-    background-image: url(background.png);
+    background-image: url(bg.png);
     background-repeat: no-repeat;
     background-attachment: fixed;
     background-size: cover;
@@ -21,7 +21,7 @@ body {
 
 .header h1{
     padding: 10px 25px;
-    color: #ffa08f;
+    color: #81e8f7;
     font-weight: 900;
     font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     font-style: italic;
@@ -48,7 +48,7 @@ body {
     justify-content: center;
     flex-direction: column;
     width: 45%;
-    background:  #ffa08f; 
+    background:  #ccecff; 
     border-radius: 2% 30% 20% 2%;
 }
 .col-1 img {
@@ -59,19 +59,23 @@ body {
     display: flex;
     width: 55%;
     padding: 40px;
+    margin-bottom: 100px;
+    
+    
 }
 
 h2 {
     margin: 0 15px 0 25px;
     font-size: 20px;
     font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
-    color:  #ffa08f;
+    color:  #81e8f7;
     padding: 40px 20px 0px;
 }
 h3 {
     margin: 0 15px 0 25px;
-    font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
-    color: white;
+    font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;   
+    text-align: justify;
+    color: #4a5761;
     padding: 10px 20px 0px;
 }
 .login-form {
@@ -80,6 +84,7 @@ h3 {
     flex-direction: column;
     align-items: center;
     height: 32px;
+    margin-top: -20px;
 }
 
 .title-form {
@@ -92,7 +97,7 @@ h3 {
     position: relative;
     width: 100%;
     height: 50px;
-    margin: 30px 0;
+    margin: 23px 0;
 }
 
 .input-box input {
@@ -103,14 +108,13 @@ h3 {
     padding: 20px 45px 20px 20px;
     border: 2px solid #afafaf;
     border-radius: 40px;
-    color: #ffa08f;
-    box-shadow: inset 1.5px 1.5px 4.5px #e5a69b,
-    inset -3px -3px 10px #e08d7e;
+    color: black;
+    
 }
 
 .input-box input:focus {
-    box-shadow: inset 1px 1px 2px #ffa08f,
-    inset -1px -1px 2px #ffa08f;
+    box-shadow: inset 1px 1px 2px #81e8f7,
+    inset -1px -1px 2px #81e8f7;
 }
 
 .input-box input::placeholder {
@@ -127,12 +131,15 @@ h3 {
 }
 
 .button {
-    width: 100%;
+    width: 75%;
     height: 50px;
-    background-color: #ffa08f;
+    background-color: #81e8f7;
+    font-weight: 100;
+    display: block;       
+    margin: 0 auto;
     border: none;
     outline: none;
-    color: white;
+    color: #000000;
     font-size: 17px;
     font-weight: 500;
     cursor: pointer;
@@ -146,3 +153,10 @@ h3 {
     box-shadow: inset 1px 1px 2px rgba(201, 84, 162, 0.586),
     inset -1px -1px 2px rgba(224, 81, 188, 0.278);
 } 
+
+
+.btn-register {
+    width: 100%;
+}
+
+

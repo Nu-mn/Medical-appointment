@@ -11,6 +11,6 @@ if (ini_get("session.use_cookies")) {
     );
 }
 
-header("Location: /source/index.php");
+header("Location: /Medical-appointment/source/index.php");
 exit();
 ?>
