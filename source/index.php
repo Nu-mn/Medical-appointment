@@ -1,8 +1,6 @@
 <?php
 session_start();
 
-define('BASE_PATH', __DIR__);
-
 define('BASE_URL', '/Medical-appointment/source');
 
 if (isset($_SESSION["user_id"])) {
@@ -14,4 +12,3 @@ if (isset($_SESSION["user_id"])) {
     header("Location: " . BASE_URL . "/Login/login.php");
     exit();
 }
-

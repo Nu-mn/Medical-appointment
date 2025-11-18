@@ -11,6 +11,8 @@ $service = new UserService($conn);
 
 // Lấy dữ liệu JSON từ fetch()
 $input = json_decode(file_get_contents("php://input"), true);
+file_put_contents("debug.txt", print_r($input, true));
+
 
 // fallback nếu test bằng form POST
 if (!$input) {
