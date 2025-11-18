@@ -40,6 +40,7 @@ if ($result['success']) {
     $_SESSION["user_id"] = $result["user"]["user_id"];
     $_SESSION["phone"] = $result["user"]["phone"];
 
+
     echo json_encode([
         "success" => true,
         "message" => "Đăng nhập thành công",

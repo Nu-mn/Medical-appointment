@@ -26,17 +26,11 @@ require_once __DIR__ . '/../models/user_service/UserService.php';
 
 <body>
     <!-- Ẩn user_id nếu đã đăng nhập -->
-    <?php if(isset($_SESSION['id'])): ?>
-        <span id="userId" style="display:none;"><?php echo $_SESSION['id']; ?></span>
+    <?php if(isset($_SESSION['user_id'])): ?>
+        <span id="userId" style="display:none;"><?php echo $_SESSION['user_id']; ?></span>
     <?php endif; ?>
-    <?php
-      if (isset($_SESSION["user_id"])) {
-
-            // NAVIGATION
-            //main
-            include __DIR__ . '/pages/main.php';
-          }
-    
+   <?php
+        include __DIR__ . '/pages/main.php';
     ?>
      <!-- Popup login -->
     <div id="loginPopup" style="

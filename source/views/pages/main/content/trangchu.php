@@ -14,7 +14,7 @@
                             In healthcare sector, service excellence is the facility of the hospital
                             as healthcare service provider to consistently…
                         </p>
-                        <a  onclick="checkLogin(event, 'appoitment')" class="btn btn-light btn-lg">Make an appointment</a>
+                        <a  onclick="checkLogin(event, 'appointment')" class="btn btn-light btn-lg">Make an appointment</a>
                     </div>
                        
                 </div>

@@ -29,8 +29,8 @@
                     <a id="nav-user" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                         <img id="nav-avatar" src = "../images/user.jpg" height = "30px"  width = "30px" alt = "Avatar">
                         <div class="infor">
-                            <p id="user"><?= htmlspecialchars($_SESSION["username"] ?? '') ?></p>
-                            <p id="email"><?= htmlspecialchars($_SESSION["email"] ?? '') ?></p>
+                            <p id="user"></p>
+                            <p id="email_user"></p>
 
                         </div>
                     </a>
@@ -69,7 +69,7 @@ window.addEventListener("DOMContentLoaded", () => {
             if (data.error) return console.error("API Error:", data.error);
 
             document.getElementById("user").textContent = data.username || " ";
-            document.getElementById("email").textContent = data.email || " ";
+            document.getElementById("email_user").textContent = data.email || " ";
         })
         .catch(err => console.error("Lỗi fetch profile:", err));
 });

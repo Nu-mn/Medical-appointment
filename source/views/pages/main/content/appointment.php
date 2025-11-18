@@ -70,7 +70,7 @@
 <div id="toast-container"></div>
 
 <script>
-const SESSION_USER_ID = <?php echo json_encode($_SESSION["id"]); ?>;
+const SESSION_USER_ID = <?php echo json_encode($_SESSION["user_id"]); ?>;
 
 let data = "";
 // Click chon patient

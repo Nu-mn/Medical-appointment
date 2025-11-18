@@ -3,10 +3,6 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-if (!isset($_SESSION['id'])) {
-    header("Location: /source/index.php");
-    exit();
-}
 
 ?>
 <div class="main-content" id="main">
@@ -194,7 +190,7 @@ if (!isset($_SESSION['id'])) {
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <!-- Script preload patient -->
 <script>
-const SESSION_USER_ID = <?php echo json_encode($_SESSION["id"]); ?>;
+const SESSION_USER_ID = <?php echo json_encode($_SESSION["user_id"]); ?>;
 
 let data = "";
 function openDetail(id) {
