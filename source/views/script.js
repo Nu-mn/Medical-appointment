@@ -3,7 +3,6 @@ var giabanle =  $("#soluong").val();
 var bool = true;
 
 
-
 function errormessage(message,id){
     let error = document.getElementById(id)
 

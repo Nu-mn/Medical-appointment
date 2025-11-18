@@ -1,66 +1,150 @@
-<div class="main-content" id="main">
-    <main>
-        <div class="page-header">
-            <div>
-                <h3>Thông tin tài khoản</h3>
-            </div>
+<div class="profile-wrapper">
+
+    <!-- Cover -->
+    <div class="cover-section">
+        <img src="../images/bg_doctor.jpg" class="cover-img">
+    </div>
+
+    <!-- Avatar + Basic Info -->
+    <div class="avatar-section">
+        <img src="../images/user.jpg" class="avatar">
+
+        <div class="basic-info">
+            <h2></h2>
+            <p></p>
+        </div>
+    </div>
+
+    <!-- Profile details -->
+    <div class="profile-details">
+
+        <div class="detail-row">
+            <div class="detail-label">Họ và tên</div>
+            <div class="detail-value username"></div>
         </div>
 
-        <section class="profile-view">
-            <div class="profile-container">
-                <div class="profile-header">
-                    <img src="../images/user.jpg" alt="Avatar" class="avatar-img" height="300px" width="300px">
-                </div>
+        <div class="detail-row">
+            <div class="detail-label">Email</div>
+            <div class="detail-value email"></div>
+        </div>
 
-                <div class="profile-info">
-                    <div class="info-item">
-                        <i class="fa fa-user icon"></i>
-                        <span class="label">Họ và tên: </span>
-                        <span class="value"><?= htmlspecialchars($_SESSION["fullname"]) ?></span>
-                    </div>
+        <div class="detail-row">
+            <div class="detail-label">Số điện thoại</div>
+            <div class="detail-value phone"></div>
+        </div>
 
-                    <div class="info-item">
-                        <i class="fa fa-phone icon"></i>
-                        <span class="label">Điện thoại: </span>
-                        <span class="value"><?= htmlspecialchars($_SESSION["phone"]) ?></span>
-                    </div>
 
-                    <div class="info-item">
-                        <i class="fa fa-envelope icon"></i>
-                        <span class="label">Email: </span>
-                        <span class="value"><?= htmlspecialchars($_SESSION["email"]) ?></span>
-                    </div>
-
-                    <div class="info-item">
-                        <i class="fa fa-money icon"></i>
-                        <span class="label">Số dư: </span>
-                        <span class="value" id="ttsodu">Đang tải...</span>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
+    </div>
 </div>
 
 <script>
-const user_id = <?php echo (int)$_SESSION['id']; ?>;
+window.addEventListener("DOMContentLoaded", () => { // Đảm bảo DOM load xong
+    const user_id = <?= (int)$_SESSION['user_id'] ?>; // khai báo 1 lần duy nhất
 
-// 🟢 Gọi API để lấy số dư
-fetch(`/SOA_GK/source/models/transaction_service/TransactionAPI.php/transaction/balance?user_id=${user_id}`)
-    .then(res => res.json())
-    .then(data => {
-        const el = document.getElementById("ttsodu");
-        if (data.balance !== undefined && data.balance !== null) {
-            const formatted = new Intl.NumberFormat('vi-VN').format(data.balance) + ' VNĐ';
-            el.textContent = formatted; // ✅ dùng textContent thay vì value
-        } else if (data.error) {
-            el.textContent = "Lỗi: " + data.error;
-        } else {
-            el.textContent = "Không có dữ liệu";
-        }
-    })
-    .catch(err => {
-        console.error("Lỗi khi gọi API:", err);
-        document.getElementById("ttsodu").textContent = "Không thể lấy số dư";
-    });
+    fetch(`/Medical-appointment/source/models/user_service/UserAPI.php/users/${user_id}`)
+        .then(res => res.json())
+        .then(data => {
+            if (data.error) return console.error("API Error:", data.error);
+
+            // Cập nhật dữ liệu vào header
+            document.getElementById("user").textContent = data.username || " ";
+            document.getElementById("email").textContent = data.email || " ";
+
+            // Cập nhật dữ liệu vào profile
+            document.querySelector(".detail-value.username").textContent = data.username || "Chưa có họ tên";
+            document.querySelector(".detail-value.email").textContent = data.email || "Chưa có email";
+            document.querySelector(".detail-value.phone").textContent = data.phone || "Chưa có số điện thoại";
+
+            document.querySelector(".basic-info h2").textContent = data.username; 
+            document.querySelector(".basic-info p").textContent = data.email || "Chưa có email";
+        })
+        .catch(err => console.error("Lỗi fetch profile:", err));
+});
 </script>
+
+
+
+
+<style>
+.profile-wrapper {
+    width: 900px;
+    background: #fff;
+    margin: 30px auto;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+    font-family: "Segoe UI", sans-serif;
+}
+
+/* Cover */
+.cover-section {
+    position: relative;
+}
+.cover-img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+}
+
+/* Avatar + Name + Description */
+.avatar-section {
+    display: flex;
+    align-items: flex-end; /* Avatar ở dưới, chữ thẳng hàng avatar */
+    gap: 20px;
+    padding: 0 30px;
+    margin-top: -60px; /* Kéo avatar đè lên cover */
+    position: relative;
+}
+
+.avatar {
+    width: 130px;
+    height: 130px;
+    border-radius: 20px;
+    border: 4px solid #fff;
+    object-fit: cover;
+    background: #fff;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+/* Name + Description đẹp hơn */
+.basic-info {
+    padding-bottom: 15px; /* Căn chữ thẳng hàng avatar */
+}
+
+.basic-info h2 {
+    margin: 0;
+    font-size: 26px;
+    font-weight: bold;
+    color: #222;
+}
+
+.basic-info p {
+    margin-top: 4px;
+    font-size: 15px;
+    color: #666;
+}
+
+/* Details */
+.profile-details {
+    padding: 25px 30px;
+}
+
+.detail-row {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    padding: 18px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.detail-label {
+    font-weight: bold;
+    color: #333;
+}
+
+.detail-value {
+    color: #555;
+}
+
+
+
+</style>

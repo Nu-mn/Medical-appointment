@@ -27,9 +27,9 @@
             <ul  class=" navbar-nav" >
                 <li class="nav-item dropdown">
                     <a id="nav-user" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                        <img id="nav-avatar" src = "/source/images/user.jpg" height = "30px"  width = "30px" alt = "Avatar">
+                        <img id="nav-avatar" src = "../images/user.jpg" height = "30px"  width = "30px" alt = "Avatar">
                         <div class="infor">
-                            <p id="user"><?= htmlspecialchars($_SESSION["username"] ?? 'Guest') ?></p>
+                            <p id="user"><?= htmlspecialchars($_SESSION["username"] ?? '') ?></p>
                             <p id="email"><?= htmlspecialchars($_SESSION["email"] ?? '') ?></p>
 
                         </div>
@@ -57,3 +57,20 @@
 
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+window.addEventListener("DOMContentLoaded", () => {
+    const user_id = <?= (int)$_SESSION['user_id'] ?>; 
+    if (!user_id) return;
+
+     fetch(`/Medical-appointment/source/models/user_service/UserAPI.php/users/${user_id}`)
+        .then(res => res.json())
+        .then(data => {
+            if (data.error) return console.error("API Error:", data.error);
+
+            document.getElementById("user").textContent = data.username || " ";
+            document.getElementById("email").textContent = data.email || " ";
+        })
+        .catch(err => console.error("Lỗi fetch profile:", err));
+});
+</script>

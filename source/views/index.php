@@ -1,4 +1,16 @@
 
+<?php
+if (!isset($_SESSION["user_id"])) {
+    header("Location: ../index.php");
+    exit();
+}
+
+require_once __DIR__ . '/../models/user_service/UserService.php';
+
+
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,8 +31,12 @@
 
 <body>
     <?php
-          
-        include __DIR__ . '/pages/main.php';
+      if (isset($_SESSION["user_id"])) {
+
+            // NAVIGATION
+            //main
+            include __DIR__ . '/pages/main.php';
+          }
     
     ?>
 </body>
