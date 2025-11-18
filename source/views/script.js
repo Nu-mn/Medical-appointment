@@ -4,11 +4,6 @@ var bool = true;
 
 
 
-// Gọi hàm lặp lại mỗi 2 giây
-setInterval(changeWebsize, 100);
-
-
-
 function errormessage(message,id){
     let error = document.getElementById(id)
 
@@ -67,4 +62,20 @@ function formatMoney(money) {
 }
 
 
+function showToast(message, type = "info", duration = 5000) {
+    const container = document.getElementById("toast-container");
+    const toast = document.createElement("div");
+    toast.className = `toast ${type}`;
+    toast.innerText = message;
+    container.appendChild(toast);
+
+    // Hiện ra với hiệu ứng
+    setTimeout(() => toast.classList.add("show"), 100);
+
+    // Ẩn và xóa sau duration ms
+    setTimeout(() => {
+        toast.classList.remove("show");
+        setTimeout(() => toast.remove(), 400);
+    }, duration);
+}
 

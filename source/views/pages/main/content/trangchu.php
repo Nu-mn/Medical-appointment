@@ -1,5 +1,5 @@
 <div class="main-content" id="main">
-        <main>
+    <main>
 
        <!-- HERO SECTION -->
          <section class="hero-section text-white">

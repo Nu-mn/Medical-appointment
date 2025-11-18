@@ -1,0 +1,73 @@
+# -----------------------------
+# File: Test-PatientAPI.ps1
+# -----------------------------
+
+# URL API
+$apiUrl = "http://localhost/medical-appointment/source/models/patient_service/PatientAPI.php"
+
+# -----------------------------
+# 1️⃣ GET ALL patients
+# -----------------------------
+Write-Host "`n===== GET ALL ====="
+$response = Invoke-RestMethod -Uri $apiUrl -Method GET
+$response | ConvertTo-Json -Depth 5
+Write-Host "`n"
+
+# -----------------------------
+# 2️⃣ GET patient by ID
+# -----------------------------
+$id = 1
+Write-Host "===== GET BY ID ($id) ====="
+$response = Invoke-RestMethod -Uri "$apiUrl?id=$id" -Method GET
+$response | ConvertTo-Json -Depth 5
+Write-Host "`n"
+
+# -----------------------------
+# 3️⃣ POST (CREATE new patient)
+# -----------------------------
+Write-Host "===== POST CREATE ====="
+$bodyPost = @{
+    user_id = 2
+    full_name = "Nguyen Van A"
+    date_of_birth = "1990-01-01"
+    gender = "male"
+    email = "vana@example.com"
+    phone = "0901234567"
+    address = "Ha Noi"
+    citizen_id = "123456789"
+    insurance_number = "BHXH123"
+} | ConvertTo-Json
+
+$response = Invoke-RestMethod -Uri $apiUrl -Method POST -Body $bodyPost -ContentType "application/json"
+$response | ConvertTo-Json -Depth 5
+Write-Host "`n"
+
+# -----------------------------
+# 4️⃣ PUT (UPDATE patient)
+# -----------------------------
+$idUpdate = 1
+Write-Host "===== PUT UPDATE ($idUpdate) ====="
+$bodyPut = @{
+    user_id = 2
+    full_name = "Nguyen Van A Updated"
+    date_of_birth = "1990-01-01"
+    gender = "male"
+    email = "vana_updated@example.com"
+    phone = "0912345678"
+    address = "Ha Noi Updated"
+    citizen_id = "123456789"
+    insurance_number = "BHXH123"
+} | ConvertTo-Json
+
+$response = Invoke-RestMethod -Uri "$apiUrl?id=$idUpdate" -Method PUT -Body $bodyPut -ContentType "application/json"
+$response | ConvertTo-Json -Depth 5
+Write-Host "`n"
+
+# -----------------------------
+# 5️⃣ DELETE patient
+# -----------------------------
+$idDelete = 2
+Write-Host "===== DELETE ($idDelete) ====="
+$response = Invoke-RestMethod -Uri "$apiUrl?id=$idDelete" -Method DELETE
+$response | ConvertTo-Json -Depth 5
+Write-Host "`n"

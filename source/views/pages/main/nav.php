@@ -4,8 +4,8 @@
 <nav class="navbar navbar-expand-lg bg-white shadow-sm py-3">
     <div class="container">
         <a class="navbar-brand fw-bold text-primary" href="#" title="Về trang chủ">
-            <img src="../images/logo.ico" alt="Logo" style="width:40px;" > 
-           BookingHospital
+            <img src="../images/pharmacy.png" alt="Logo" style="width:40px;" > 
+            BookingHospital
         </a>
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
@@ -16,7 +16,7 @@
             <ul class="navbar-nav mx-auto mb-2 mb-lg-0 fw-semibold">
                 <li class="nav-item"><a class="nav-link px-3" href="index.php?nav=home">Trang chủ</a></li>
                 <li class="nav-item"><a class="nav-link px-3" href="index.php?nav=appointment">Đặt lịch</a></li>
-                <li class="nav-item"><a class="nav-link px-3" href="index.php?nav=form">Phiếu khám</a></li>
+                <li class="nav-item"><a class="nav-link px-3" href="index.php?nav=invoice">Hóa đơn</a></li>
                 <li class="nav-item"><a class="nav-link px-3" href="index.php?nav=doctors">Bác sĩ</a></li>
                 <li class="nav-item"><a class="nav-link px-3" href="index.php?nav=patients">Hồ sơ</a></li>
                 <li class="nav-item"><a class="nav-link px-3" href="#">Liên hệ</a></li>
