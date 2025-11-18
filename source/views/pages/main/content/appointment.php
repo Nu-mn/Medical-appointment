@@ -205,8 +205,8 @@ document.getElementById("confirm-booking").addEventListener("click", () => {
     })
     .then(res => res.json())
     .then(r => {
-        if (r.message) {
-             chuyengiaodien('booking-step-2', 'booking-step-3');
+        if (r.status) {
+            chuyengiaodien('booking-step-2', 'booking-step-3');
         }
     })
     .catch(err => {
