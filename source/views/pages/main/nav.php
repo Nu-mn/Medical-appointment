@@ -63,7 +63,7 @@ window.addEventListener("DOMContentLoaded", () => {
     const user_id = <?= (int)$_SESSION['user_id'] ?>; 
     if (!user_id) return;
 
-     fetch(`/Medical-appointment/source/models/user_service/UserAPI.php/users/${user_id}`)
+     fetch("http://localhost/medical-appointment/source/models/user_service/UserAPI.php/users/" + user_id)
         .then(res => res.json())
         .then(data => {
             if (data.error) return console.error("API Error:", data.error);

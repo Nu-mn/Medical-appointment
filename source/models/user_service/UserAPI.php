@@ -1,4 +1,9 @@
 <?php
+header("Content-Type: application/json");
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE");
+header("Access-Control-Allow-Headers: Content-Type");
+
 require_once "../../database/db.php";
 require_once "UserService.php";
 
@@ -12,7 +17,6 @@ $service = new UserService($conn);
 $method = $_SERVER['REQUEST_METHOD'];
 $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
-header("Content-Type: application/json");
 
 if (str_ends_with($path, "/users") && $method === "GET") {
 

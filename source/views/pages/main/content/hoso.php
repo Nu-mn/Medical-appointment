@@ -41,14 +41,10 @@
 window.addEventListener("DOMContentLoaded", () => { // Đảm bảo DOM load xong
     const user_id = <?= (int)$_SESSION['user_id'] ?>; // khai báo 1 lần duy nhất
 
-    fetch(`/Medical-appointment/source/models/user_service/UserAPI.php/users/${user_id}`)
+    fetch("http://localhost/medical-appointment/source/models/user_service/UserAPI.php/users/" + user_id)
         .then(res => res.json())
         .then(data => {
             if (data.error) return console.error("API Error:", data.error);
-
-            // Cập nhật dữ liệu vào header
-            document.getElementById("user").textContent = data.username || " ";
-            document.getElementById("email").textContent = data.email || " ";
 
             // Cập nhật dữ liệu vào profile
             document.querySelector(".detail-value.username").textContent = data.username || "Chưa có họ tên";
