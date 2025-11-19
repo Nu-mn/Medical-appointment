@@ -8,13 +8,12 @@
 
                     <div class="col-lg-6">
                         <h1 class="display-4 fw-bold mb-3">
-                            Health Care <br> For Whole Family
+                            Sức khỏe <br> cho gia đình bạn
                         </h1>
                         <p class="mb-4">
-                            In healthcare sector, service excellence is the facility of the hospital
-                            as healthcare service provider to consistently…
+                            Trang web hỗ trợ đặt lịch khám sức khỏe của bệnh viện TDTU
                         </p>
-                        <a  onclick="checkLogin(event, 'appointment')" class="btn btn-light btn-lg">Make an appointment</a>
+                        <a  onclick="checkLogin(event, 'appointment')" class="btn btn-light btn-lg">Đặt lịch ngay</a>
                     </div>
                        
                 </div>

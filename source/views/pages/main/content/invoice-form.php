@@ -57,7 +57,7 @@ if (!userId) {
                     <div class="${statusClass}">${inv.status}</div>
                 </div>
                 <div class="invoice-patient">${inv.patient_name}</div>
-                <div class="invoice-hospital">BỆNH VIỆN DA LIỄU TP.HCM</div>
+                <div class="invoice-hospital">BỆNH VIỆN ĐẠI HỌC TÔN ĐỨC THẮNG</div>
                 <div class="invoice-details">
                     <div>STT: ${stt}</div>
                     <div>Chuyên khoa: ${inv.specialization_name}</div>

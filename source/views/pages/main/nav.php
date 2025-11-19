@@ -5,7 +5,7 @@
     <div class="container">
         <a class="navbar-brand fw-bold text-primary" href="#" title="Về trang chủ">
             <img src="../images/pharmacy.png" alt="Logo" style="width:40px;" > 
-            BookingHospital
+            HealthcareBooking
         </a>
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
