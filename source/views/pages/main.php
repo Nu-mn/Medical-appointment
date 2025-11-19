@@ -15,7 +15,7 @@
             include __DIR__ . "/main/content/appointment.php";
 
         } elseif ($nav == 'invoice') {
-            include __DIR__ . "/main/content/invoice-history.php";
+            include __DIR__ . "/main/content/invoice-form.php";
 
         } elseif ($nav == 'doctors') {
             include __DIR__ . "/main/content/doctors.php";

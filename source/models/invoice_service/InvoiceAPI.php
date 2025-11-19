@@ -1,4 +1,4 @@
-<?php 
+<?php  
 header("Content-Type: application/json");
 
 require_once "../../database/db.php";
@@ -14,7 +14,6 @@ $service = new InvoiceService($conn);
 $maintenance_mode = false; // true nếu đang bảo trì
 
 if ($maintenance_mode) {
-    // Trả về thông báo bảo trì
     http_response_code(503); // 503 Service Unavailable
     echo json_encode([
         "status" => "maintenance",
@@ -30,26 +29,38 @@ $input = json_decode(file_get_contents("php://input"), true);
 
 // Routing
 if ($method === "POST" && str_ends_with($path, "/invoice/create")) {
-     if (!isset($input['booking_id'], $input['payment_id'], $input['user_id'], $input['total_amount'], $input['details'])) {
-        http_response_code(400);
-        echo json_encode(["error" => "booking_id, payment_id, user_id, total_amount, details required"]);
-        exit;
+
+    $required = ['booking_id', 'payment_id', 'user_id', 'fee', 'specialization_name', 'patient_name', 'num_order', 'status'];
+    foreach ($required as $key) {
+        if (!isset($input[$key])) {
+            http_response_code(400);
+            echo json_encode(["error" => "$key required"]);
+            exit;
+        }
     }
+
+
     $result = $service->createInvoice(
         $input['booking_id'],
         $input['payment_id'],
         $input['user_id'],
-        $input['total_amount'],
-        $input['details']
+        $input['fee'],
+        $input['specialization_name'],
+        $input['patient_name'],
+        $input['num_order'],
+        $input['status']
     );
+
     echo json_encode($result);
 
 } elseif ($method === "GET" && str_ends_with($path, "/invoice/history")) {
+
     if (!isset($_GET['user_id'])) {
         http_response_code(400);
         echo json_encode(["error" => "user_id required"]);
         exit;
     }
+
     $result = $service->getInvoiceHistory($_GET['user_id']);
     echo json_encode($result);
 
@@ -57,3 +68,4 @@ if ($method === "POST" && str_ends_with($path, "/invoice/create")) {
     http_response_code(404);
     echo json_encode(["error" => "Not Found"]);
 }
+?>

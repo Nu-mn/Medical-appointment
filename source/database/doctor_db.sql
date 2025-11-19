@@ -2,6 +2,13 @@
 CREATE DATABASE IF NOT EXISTS doctor_db;
 USE doctor_db;
 
+-- Table: specializations
+CREATE TABLE IF NOT EXISTS specializations (
+    specialization_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    amount DECIMAL(12,2) NOT NULL  
+);
+
 -- Table: doctors
 CREATE TABLE IF NOT EXISTS doctors (
     doctor_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -11,7 +18,8 @@ CREATE TABLE IF NOT EXISTS doctors (
     specialization_id INT NOT NULL,
     experience_years INT DEFAULT 0,
     description TEXT,
-    status INT DEFAULT 1
+    status INT DEFAULT 1,
+    FOREIGN KEY (specialization_id) REFERENCES specializations(specialization_id)
 );
 
 -- Table: doctor_schedule
@@ -19,27 +27,21 @@ CREATE TABLE IF NOT EXISTS doctor_schedule (
     schedule_id INT AUTO_INCREMENT PRIMARY KEY,
     doctor_id INT NOT NULL,
     date DATE NOT NULL,
-    session ENUM('Sáng', 'Chiều', 'Tối') NOT NULL,
+    session ENUM('morning', 'afternoon', 'evening') NOT NULL,
     available_slots INT DEFAULT 0,
     FOREIGN KEY (doctor_id) REFERENCES doctors(doctor_id)
         ON DELETE CASCADE ON UPDATE CASCADE
 );
 
--- Table: specialization
-CREATE TABLE IF NOT EXISTS specializations (
-    specialization_id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100) NOT NULL
-);
-
--- Some sample data
-INSERT INTO specializations (name)
+-- Sample data
+INSERT INTO specializations (name, amount)
 VALUES
-('Tim mạch'),
-('Sản - Phụ khoa'),
-('Tai - Mũi - Họng'),
-('Da liễu'),
-('Nội tổng quát'),
-('Ngoại tổng quát');
+('Tim mạch', 180000),
+('Sản - Phụ khoa', 150000),
+('Tai - Mũi - Họng', 120000),
+('Da liễu', 130000),
+('Nội tổng quát', 100000),
+('Ngoại tổng quát', 160000);
 
 -- Tim mạch (ID=1)
 INSERT INTO doctors (doctor_name, email, gender, specialization_id, experience_years, description, status) 
