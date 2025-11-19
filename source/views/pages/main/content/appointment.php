@@ -210,13 +210,13 @@ document.getElementById("time_slot").addEventListener("change", function() {
     updateFee();
 });
 
-
 document.getElementById("confirm-booking").addEventListener("click", () => {
 
     if (!data.patient_id) {
         alert("Vui lòng chọn hồ sơ bệnh nhân!");
         return;
     }
+
 
     const payload = {
         specialization_id: document.getElementById("specialty").value,
@@ -225,10 +225,11 @@ document.getElementById("confirm-booking").addEventListener("click", () => {
         slot_time: document.getElementById("time_slot").value,
         patient_id: data.patient_id,
         amount: finalFee,
-        status: "pending",
         user_id: SESSION_USER_ID
     };
 
+// alert đẹp
+alert(JSON.stringify(payload, null, 2));
     fetch("http://localhost/medical-appointment/source/models/booking_service/BookingAPI.php", {
         method: "POST",
         headers: {

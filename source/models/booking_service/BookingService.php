@@ -18,20 +18,11 @@ class BookingService {
         return $result->fetch_all(MYSQLI_ASSOC); // trả về mảng associative
     }
 
-    // GET BY STATUS
-    public function getByStatus($status) {
-        $sql = "SELECT * FROM $this->table WHERE status = ? ORDER BY booking_id DESC";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute([$status]);
-        $result = $stmt->get_result();
-        return $result->fetch_all(MYSQLI_ASSOC); 
-    }
-
    // CREATE, trả về booking_id vừa tạo
     public function create($data) {
         $sql = "INSERT INTO {$this->table}
-                (user_id, patient_id, doctor_id, specialization_id, booking_date, amount, slot_time, status)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+                (user_id, patient_id, doctor_id, specialization_id, booking_date, amount, slot_time)
+                VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         $stmt = $this->conn->prepare($sql);
         if (!$stmt) {
@@ -46,19 +37,17 @@ class BookingService {
         $booking_date   = $data['booking_date'];  // yyyy-mm-dd
         $amount         = (float)$data['amount'];
         $slot_time      = $data['slot_time'];     // HH:MM:SS
-        $status         = $data['status'] ?? 'pending';
 
         // i = int, d = double, s = string
         $stmt->bind_param(
-            "iiiisdss",
+            "iiiidss",
             $user_id,
             $patient_id,
             $doctor_id,
             $specialization_id,
             $booking_date,
             $amount,
-            $slot_time,
-            $status
+            $slot_time
         );
 
         if (!$stmt->execute()) {
@@ -72,7 +61,7 @@ class BookingService {
     // Lấy appointment theo booking_id
     public function getById($booking_id) {
         $sql = "SELECT booking_id, patient_id, doctor_id, specialization_id,
-                       booking_date, amount, slot_time, status, created_at
+                       booking_date, amount, slot_time, created_at
                 FROM {$this->table}
                 WHERE booking_id = ?";
 
@@ -91,24 +80,5 @@ class BookingService {
         return $result->fetch_assoc();   // trả về mảng hoặc null nếu không có
     }
 
-    // Cập nhật status
-    public function updateStatus($booking_id, $status) {
-        $sql = "UPDATE {$this->table}
-                SET status = ?
-                WHERE booking_id = ?";
-
-        $stmt = $this->conn->prepare($sql);
-        if (!$stmt) {
-            throw new Exception("Prepare failed: " . $this->conn->error);
-        }
-
-        $stmt->bind_param("si", $status, $booking_id);
-
-        if (!$stmt->execute()) {
-            throw new Exception("Execute failed: " . $stmt->error);
-        }
-
-        return $stmt->affected_rows > 0;
-    }
 }
 ?>

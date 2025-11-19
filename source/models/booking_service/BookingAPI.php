@@ -102,45 +102,6 @@ try {
             ]);
             break;
 
-        case 'PUT':   // update status
-            $input = json_decode(file_get_contents('php://input'), true);
-
-            if (!isset($input['booking_id'], $input['status'])) {
-                http_response_code(400);
-                echo json_encode([
-                    'status'  => 'error',
-                    'message' => 'booking_id and status are required'
-                ]);
-                exit;
-            }
-
-            $booking_id = (int)$input['booking_id'];
-            $status     = $input['status'];
-
-            // Option: kiểm tra status có hợp lệ không
-            $allowedStatus = ['pending','confirmed','completed','cancelled'];
-            if (!in_array($status, $allowedStatus, true)) {
-                http_response_code(400);
-                echo json_encode([
-                    'status'  => 'error',
-                    'message' => 'Invalid status'
-                ]);
-                exit;
-            }
-
-            $ok = $bookingService->updateStatus($booking_id, $status);
-
-            if (!$ok) {
-                http_response_code(404);
-                echo json_encode(['status' => 'error', 'message' => 'Appointment not found or status unchanged']);
-                exit;
-            }
-
-            echo json_encode([
-                'status'  => 'success',
-                'message' => 'Status updated'
-            ]);
-            break;
 
         default:
             http_response_code(405);

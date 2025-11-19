@@ -36,7 +36,6 @@ CREATE TABLE `appointments` (
   `booking_date` DATE NOT NULL,
   `amount` DECIMAL(10,0) NOT NULL,
   `slot_time` ENUM('morning','afternoon','evening') NOT NULL,
-  `status` ENUM('pending','confirmed','completed','cancelled') DEFAULT 'pending',
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
