@@ -1,5 +1,5 @@
 <style>
-body { font-family: Arial, sans-serif; background: #f7f8fa; margin: 0; }
+body { font-family: Arial, sans-serif; background: #DBEEFD; margin: 0; }
 h1 { text-align: center; color: #2f3640; margin: 20px; }
 
 .invoice-list { max-width: 700px; margin: 0 auto; display: flex; flex-direction: column; gap: 15px; }
