@@ -31,7 +31,13 @@ if (!userId) {
     invoiceList.innerHTML = `<div class="empty-message">Người dùng chưa đăng nhập</div>`;
 } else {
     fetch(`http://localhost/Medical-appointment/source/models/invoice_service/InvoiceAPI.php/invoice/history?user_id=${userId}`)
-    .then(res => res.json())
+    .then(res => {
+        if (res.status === 503) {
+            window.location.href = "/source/views/index.php?nav=404"; // dẫn tới trang bảo trì
+            return;
+        }
+        return res.json();
+    })
     .then(invoices => {
         if (!invoices || invoices.length === 0) {
             invoiceList.innerHTML = `<div class="empty-message">Chưa có phiếu khám nào</div>`;

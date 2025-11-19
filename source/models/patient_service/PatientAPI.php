@@ -5,13 +5,11 @@ header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE");
 header("Access-Control-Allow-Headers: Content-Type");
 
 // Bảo trì
-define('MAINTENANCE_MODE', false); // bật/tắt bảo trì
+define('MAINTENANCE_MODE', true); // bật/tắt bảo trì
 if (MAINTENANCE_MODE) {
     http_response_code(503); // Service Unavailable
-    echo json_encode([
-        'status' => 'error',
-        'message' => 'API đang bảo trì. Vui lòng thử lại sau.'
-    ]);
+    header("Content-Type: text/html; charset=UTF-8");
+    include __DIR__ . '/maintenance.php';
     exit;
 }
 

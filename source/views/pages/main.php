@@ -27,7 +27,7 @@
         } elseif ($nav == 'hoso') {
             include __DIR__ . "/main/content/hoso.php";
         } else {
-            include __DIR__ . "/main/content/404.php";  // phòng lỗi
+            include __DIR__ . "/main/content/maintenance.php";  // phòng lỗi
         }
     } else {
         include __DIR__ . "/main/content/trangchu.php";  // mặc định

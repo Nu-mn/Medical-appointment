@@ -3,7 +3,13 @@ let patientCache = {}; // RAM cache
 document.addEventListener("DOMContentLoaded", () => {
     // Fetch toàn bộ info bệnh nhân 
     fetch("http://localhost/medical-appointment/source/models/patient_service/PatientAPI.php?user_id=" + SESSION_USER_ID)
-      .then(res => res.json())
+       .then(res => {
+            if (res.status === 503) {
+                window.location.href = "/source/views/index.php?nav=404"; // dẫn tới trang bảo trì
+                return;
+            }
+            return res.json();
+        })
         .then(list => {
             const container = document.getElementById("patientList");
 

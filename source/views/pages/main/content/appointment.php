@@ -217,7 +217,6 @@ document.getElementById("confirm-booking").addEventListener("click", () => {
         return;
     }
 
-
     const payload = {
         specialization_id: document.getElementById("specialty").value,
         doctor_id: document.getElementById("doctor").value,
@@ -228,8 +227,11 @@ document.getElementById("confirm-booking").addEventListener("click", () => {
         user_id: SESSION_USER_ID
     };
 
-// alert đẹp
-alert(JSON.stringify(payload, null, 2));
+    if (!payload.specialization_id || !payload.doctor_id || !payload.booking_date || !payload.slot_time) {
+    alert("Vui lòng điền đầy đủ thông tin trước khi đặt lịch!");
+    return;
+    }
+
     fetch("http://localhost/medical-appointment/source/models/booking_service/BookingAPI.php", {
         method: "POST",
         headers: {
@@ -237,7 +239,13 @@ alert(JSON.stringify(payload, null, 2));
         },
         body: JSON.stringify(payload)
     })
-    .then(res => res.json())
+    .then(res => {
+        if (res.status === 503) {
+            window.location.href = "/source/views/index.php?nav=404"; // dẫn tới trang bảo trì
+            return;
+        }
+        return res.json();
+    })
     .then(r => {
         if (r.status === "success") {
             alert("Booking created! ID: " + r.booking_id);
@@ -246,7 +254,6 @@ alert(JSON.stringify(payload, null, 2));
         }})
     .catch(err => {
         console.error("Fetch error:", err);
-        alert("Không thể đặt lịch. Kiểm tra API!");
     });
 
 });
