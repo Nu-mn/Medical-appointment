@@ -24,16 +24,22 @@ $input = json_decode(file_get_contents("php://input"), true);
 
 try {
     switch ($method) {
-        case 'POST':  // tạo mới
-            $input = json_decode(file_get_contents('php://input'), true);
-
+        case 'POST':  // Tạo mới booking
             if (!$input) {
-                // Thử lấy từ form POST nếu không phải JSON
-                $input = $_POST;
+                $input = $_POST;  // fallback nếu gọi từ form
             }
 
-            // Validate cơ bản (có thể thêm tùy ý)
-            $required = ['patient_id', 'doctor_id', 'specialization_id', 'booking_date', 'amount', 'slot_time'];
+
+            $required = [
+                'user_id',
+                'patient_id',
+                'doctor_id',
+                'specialization_id',
+                'booking_date',
+                'amount',
+                'slot_time'
+            ];
+
             foreach ($required as $field) {
                 if (!isset($input[$field]) || $input[$field] === '') {
                     http_response_code(400);
@@ -46,6 +52,15 @@ try {
             }
 
             $booking_id = $bookingService->create($input);
+
+            if (!$booking_id) {
+                http_response_code(500);
+                echo json_encode([
+                    'status'  => 'error',
+                    'message' => 'Failed to create booking'
+                ]);
+                exit;
+            }
 
             echo json_encode([
                 'status'     => 'success',

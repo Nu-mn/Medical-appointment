@@ -27,28 +27,31 @@ class BookingService {
         return $result->fetch_all(MYSQLI_ASSOC); 
     }
 
-   // Tạo mới appointment, trả về booking_id vừa tạo
+   // CREATE, trả về booking_id vừa tạo
     public function create($data) {
         $sql = "INSERT INTO {$this->table}
-                (patient_id, doctor_id, specialization_id, booking_date, amount, slot_time, status)
-                VALUES (?, ?, ?, ?, ?, ?, ?)";
+                (user_id, patient_id, doctor_id, specialization_id, booking_date, amount, slot_time, status)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         $stmt = $this->conn->prepare($sql);
         if (!$stmt) {
             throw new Exception("Prepare failed: " . $this->conn->error);
         }
 
-        // Ép kiểu / xử lý default
-        $patient_id        = (int)$data['patient_id'];
-        $doctor_id         = (int)$data['doctor_id'];
+        // Ép kiểu
+        $user_id        = (int)$data['user_id'];
+        $patient_id     = (int)$data['patient_id'];
+        $doctor_id      = (int)$data['doctor_id'];
         $specialization_id = (int)$data['specialization_id'];
-        $booking_date      = $data['booking_date'];        // 'YYYY-MM-DD'
-        $amount            = (float)$data['amount'];       // DECIMAL
-        $slot_time         = $data['slot_time'];           // 'HH:MM:SS' or 'HH:MM'
-        $status            = $data['status'] ?? 'pending';
+        $booking_date   = $data['booking_date'];  // yyyy-mm-dd
+        $amount         = (float)$data['amount'];
+        $slot_time      = $data['slot_time'];     // HH:MM:SS
+        $status         = $data['status'] ?? 'pending';
 
+        // i = int, d = double, s = string
         $stmt->bind_param(
-            "iiisdss",
+            "iiiisdss",
+            $user_id,
             $patient_id,
             $doctor_id,
             $specialization_id,
@@ -62,9 +65,9 @@ class BookingService {
             throw new Exception("Execute failed: " . $stmt->error);
         }
 
-        // booking_id mới tạo
         return $this->conn->insert_id;
     }
+
 
     // Lấy appointment theo booking_id
     public function getById($booking_id) {

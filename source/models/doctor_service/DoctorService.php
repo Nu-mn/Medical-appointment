@@ -8,7 +8,17 @@ class DoctorService {
 
     // 1. Lấy bác sĩ theo chuyên khoa
     public function getDoctorsBySpecialization($specialization_id) {
-        $stmt = $this->conn->prepare("SELECT * FROM doctors WHERE specialization_id = ? AND status = 1");
+        $sql = "
+            SELECT 
+                d.*, 
+                s.amount AS specialty_fee
+            FROM doctors d
+            JOIN specializations s ON d.specialization_id = s.specialization_id
+            WHERE d.specialization_id = ? 
+            AND d.status = 1
+        ";
+
+        $stmt = $this->conn->prepare($sql);
         if (!$stmt) return [];
 
         $stmt->bind_param("i", $specialization_id);
@@ -22,6 +32,7 @@ class DoctorService {
         $stmt->close();
         return $doctors;
     }
+
 
     // 2. Lấy lịch bác sĩ
     public function getSchedule($doctor_id) {

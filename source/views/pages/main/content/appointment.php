@@ -1,3 +1,4 @@
+
 <div class="main-content" id="main">
     <main>
         <div class="booking-view">
@@ -38,6 +39,11 @@
                         </select>
                     </div>
 
+                    <!-- Tiền khám -->
+                    <div class="form-group mt-3">
+                        <label>Tiền khám</label>
+                        <input type="text" id="exam_fee" class="form-control" disabled value="0">
+                    </div>
                     <button id="go-to-step-2" class="btn btn-primary w-100 mt-4" onclick="chuyengiaodien('booking-step-1', 'booking-step-2')">TIẾP TỤC</button>
                 </div>
 
@@ -55,10 +61,10 @@
                 <div class="booking-step-3 d-none" style="text-align:center;">
                     <img src="../images/check.png" width="120">
                     <h3 class="mt-3">Đặt lịch thành công!</h3>
-                    <p>Vui lòng thanh toán trong mục Phiếu khám.</p>
+                    <p>Vui lòng thanh toán.</p>
 
-                    <button onclick="location.href='index.php?nav=invoice'" class="btn btn-primary w-100 mt-4">
-                        XEM LỊCH KHÁM
+                    <button onclick="location.href='index.php?nav=thanhtoan'" class="btn btn-primary w-100 mt-4">
+                        THANH TOÁN NGAY
                     </button>
                 </div>
 
@@ -107,7 +113,7 @@ function openDetail(patient_id, event) {
 }
 // Load danh sách chuyên khoa
 function loadSpecializations() {
-    fetch("http://localhost/medical-appointment/source/models/doctor_service/DoctorAPI.php/doctor/allspecializations")
+    fetch("http://localhost/medical-appointment/source/models/doctor_service/DoctorAPI.php/specializations")
         .then(res => res.json())
         .then(data => {
             let select = document.getElementById("specialty");
@@ -121,6 +127,8 @@ function loadSpecializations() {
 
 loadSpecializations();
 
+let baseFee = 0;
+let finalFee = 0;
 document.getElementById("specialty").addEventListener("change", function() {
     let id = this.value;
     let doctorSelect = document.getElementById("doctor");
@@ -134,6 +142,8 @@ document.getElementById("specialty").addEventListener("change", function() {
         .then(data => {
             data.forEach(doc => {
                 doctorSelect.innerHTML += `<option value="${doc.doctor_id}">${doc.doctor_name}</option>`;
+                baseFee = doc.specialty_fee;
+                updateFee(); 
             });
         });
 });
@@ -160,7 +170,6 @@ document.getElementById("doctor").addEventListener("change", function() {
             dateInput.setAttribute("min", dates[0]);
             dateInput.setAttribute("max", dates[dates.length - 1]);
 
-            // Nếu chỉ muốn show những ngày có lịch, có thể dùng datalist (optional)
         });
 });
 document.getElementById("booking_date").addEventListener("change", function() {
@@ -171,10 +180,19 @@ document.getElementById("booking_date").addEventListener("change", function() {
 
     let slots = scheduleData.filter(s => s.date === date);
 
+    const sessionMap = {
+        morning: "Buổi sáng (06:30 - 11:30)",
+        afternoon: "Buổi chiều (12:00 - 17:30)",
+        evening: "Buổi tối (18:00 - 20:00)"
+    };
+
     slots.forEach(s => {
-        let text = s.session === "morning" ? "Buổi sáng" : "Buổi chiều";
+        let text = sessionMap[s.session] || "Không xác định";
         slotSelect.innerHTML += `<option value="${s.session}">${text}</option>`;
     });
+});
+document.getElementById("time_slot").addEventListener("change", function() {
+    updateFee();
 });
 
 document.getElementById("confirm-booking").addEventListener("click", () => {
@@ -191,7 +209,7 @@ document.getElementById("confirm-booking").addEventListener("click", () => {
         booking_date: document.getElementById("booking_date").value,
         slot_time: document.getElementById("time_slot").value,
         patient_id: data.patient_id,
-        amount: 100000,
+        amount: finalFee,
         status: "pending",
         user_id: SESSION_USER_ID
     };
@@ -205,15 +223,37 @@ document.getElementById("confirm-booking").addEventListener("click", () => {
     })
     .then(res => res.json())
     .then(r => {
-        if (r.status) {
+        if (r.status === "success") {
+            alert("Booking created! ID: " + r.booking_id);
             chuyengiaodien('booking-step-2', 'booking-step-3');
-        }
-    })
+        } else {
+            alert("Error: " + r.message);
+        }})
     .catch(err => {
         console.error("Fetch error:", err);
         alert("Không thể đặt lịch. Kiểm tra API!");
     });
 
 });
+
+function updateFee() {
+    let session = document.getElementById("time_slot").value;
+
+    if (!baseFee || !session) {
+        document.getElementById("exam_fee").value = "0";
+        return;
+    }
+
+    finalFee = baseFee;
+
+    // Áp x1.5 cho ca tối
+    if (session === "evening") {
+        finalFee = baseFee * 1.5;
+    }
+
+    // Format tiền VNĐ
+    document.getElementById("exam_fee").value = formatMoney(finalFee) + " VNĐ";
+}
+
 </script>
 <script src="../models/patient_service/getPatient.js"></script>

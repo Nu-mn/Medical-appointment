@@ -46,8 +46,8 @@ switch ($method) {
         }
 
         // LẤY TẤT CẢ CHUYÊN KHOA
-        // Endpoint: /doctor/allspecializations
-        if (str_ends_with($path, "/doctor/allspecializations")) {
+        // Endpoint: /specializations
+        if (str_ends_with($path, "/specializations")) {
             echo json_encode($service->getSpecializations());
             break;
         }
