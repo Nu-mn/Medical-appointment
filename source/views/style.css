@@ -1,0 +1,331 @@
+CSS tổng quát
+* {
+    font-family: 'Poppins', sans-serif;
+    box-sizing: border-box;
+    text-decoration: none;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+/* Trang chu */
+.hero-section {
+    position: relative;
+    padding: 250px 0;
+    background-image: url('../images/bg_doctor.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+/* Lớp phủ đen nhẹ để chữ nổi bật */
+.hero-section::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45); /* tăng giảm độ tối tùy thích */
+}
+
+.hero-section .container {
+    position: relative; /* để nội dung nằm trên lớp phủ */
+    z-index: 2;
+}
+/* Navbar */
+.rightnav>ul>li>a>span {
+    color: #f1f1f1;
+    padding: 3px;
+}
+
+#nav-user {
+    display: flex;
+    padding: 0;
+    align-items: center;
+}
+#nav {
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+    padding: 5px 10px;
+}
+
+
+.nav-item {
+    margin: 3px 5px;
+}
+
+#nav-avatar {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    margin: 2px;
+}
+
+#nav-user::after {
+    margin: 10px 5px;
+}
+.leftnav {
+    display: flex;
+    align-items: center;
+}
+
+.infor {
+    margin-left: 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex-grow: 1;
+    font-size: x-small;
+}
+
+.infor p {
+    margin: 0;
+}
+
+#user {
+    font-size: small;
+}
+
+.profile-info {
+    padding: 15px 25px;
+
+}
+.form-control{
+    width: 120px;
+}
+.profile-view {
+    display: grid;
+    align-items: top;
+    justify-content: center;
+    height: 660px;
+    overflow-y: auto; 
+}
+
+.profile-info h3 {
+    font-size: 15px;
+    color: #444;
+    margin-bottom: 12px;
+}
+.profile-container {
+    background-color: white;
+    padding: 25px;
+    min-width: 500px;
+    max-width: 1000px;
+    margin: 25px 0;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.profile-card {
+    max-width: 680px;
+    margin: auto;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+.profile-header {
+    text-align: center;
+    padding: 4px 8px 15px;
+    background-color: #e9f6f3;
+}
+
+.avatar {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid white;
+    box-shadow: 0 0 5px rgba(0,0,0,0.1);
+}
+h2 {
+    text-align: center;
+    margin-bottom: 15px;
+}
+.info-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+}
+#main{
+    background-color: #DBEEFD;
+    height: max-content;  
+  }
+.icon {
+    font-size: 16px;
+    padding: 8px;
+    width: 35px;
+}
+
+#avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+}
+
+.logo{
+    display: flex;
+    margin: 0;
+    padding: 0;
+}
+
+.logo h4{
+    color: #ffffffd6;
+    margin: 10px 10px 0 10px;
+    font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
+/* HO SO BENH NHAN */
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #efefef;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+}
+
+.add-btn {
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-left: 100px;
+}
+
+.patient-card {
+    height: 170px;
+    border-bottom: 1px solid #eee;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+}
+.patient-card:hover {
+    background: #fafafa;
+}
+
+.name-line {
+    display: flex;
+    gap: 10px;
+    font-size: 15px;
+}
+
+.detail {
+    font-size: 14px;
+    margin-top: 3px;
+}
+
+.phone {
+    color: #555;
+}
+
+.default-label {
+    display: inline-block;
+    background: #ffebeb;
+    border: 1px solid #ff4d4f;
+    padding: 2px 6px;
+    color: #ff4d4f;
+    font-size: 12px;
+    border-radius: 3px;
+    margin-top: 8px;
+}
+
+.actions {
+    display: block;
+    gap: 12px;
+    align-items: start;
+}
+.btn-chon{
+   margin: 6px;
+}
+
+.set-default {
+    background: #fff;
+    border: 1px solid #bbb;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+#update-profile{
+    display: flex;
+    align-items: center;
+    max-width: 800px;
+}
+
+/* Dialog box */
+.dialog-box {
+    background: white;
+    width: 420px;
+    padding: 20px;
+    border-radius: 10px;
+    animation: fadeIn 0.25s ease;
+    position: relative;
+}
+
+.dialog-content p {
+    margin: 6px 0;
+    font-size: 15px;
+}
+
+.close-btn {
+    position: absolute;
+    right: 12px;
+    top: 10px;
+    font-size: 22px;
+    cursor: pointer;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+#toast-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.toast {
+    min-width: 250px;
+    background-color: #333;
+    color: white;
+    padding: 12px 16px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(234, 234, 234, 0.3);
+    opacity: 0;
+    transform: translateX(100%);
+    transition: all 0.4s ease;
+    font-size: 14px;
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.toast.success { background-color: #28a745; } /* xanh */
+.toast.error   { background-color: rgba(229, 79, 79, 1); } /* đỏ */
+.toast.warning { background-color: #f2e71cff; color: #000; } /* vàng */
+.toast.info    { background-color: #17a2b8; } /* xanh dương nhạt */
+
+/* Booking  */
+.booking-view{
+    display: grid;
+    align-items: top;
+    justify-content: center;
+    height: 660px;
+    overflow-y: auto; 
+}
+.booking-container {
+    background-color: white;
+    padding: 25px;
+    min-width: 500px;
+    height: fit-content;
+    margin: 25px 0;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
