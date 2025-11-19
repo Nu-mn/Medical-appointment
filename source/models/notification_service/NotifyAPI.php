@@ -1,6 +1,17 @@
 <?php
     header("Content-Type: application/json");
 
+    // Bảo trì
+    define('MAINTENANCE_MODE', false); // bật/tắt bảo trì
+    if (MAINTENANCE_MODE) {
+        http_response_code(503); // Service Unavailable
+        echo json_encode([
+            'status' => 'error',
+            'message' => 'API đang bảo trì. Vui lòng thử lại sau.'
+        ]);
+        exit;
+    }
+
     require_once "../../database/db.php";
     require_once "NotificationService.php";
 

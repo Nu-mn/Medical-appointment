@@ -1,5 +1,19 @@
 <?php  
+header("Access-Control-Allow-Origin: http://localhost:3000"); // Hoặc "*" nếu test
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
+header("Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS");
 header("Content-Type: application/json");
+
+// Bảo trì
+define('MAINTENANCE_MODE', false); // bật/tắt bảo trì
+if (MAINTENANCE_MODE) {
+    http_response_code(503); // Service Unavailable
+    echo json_encode([
+        'status' => 'error',
+        'message' => 'API đang bảo trì. Vui lòng thử lại sau.'
+    ]);
+    exit;
+}
 
 require_once "../../database/db.php";
 require_once "InvoiceService.php";

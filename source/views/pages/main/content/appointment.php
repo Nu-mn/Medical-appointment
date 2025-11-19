@@ -11,7 +11,7 @@
                 <div class="booking-step-1">
                     <!-- Chọn chuyên khoa -->
                     <div class="form-group mt-3">
-                        <label>Chọn chuyên khoa</label>
+                        <label>Chọn chuyên khoa  <span class="text-danger">*</span></label>
                         <select id="specialty" class="form-control">
                             <option value="">-- Chọn chuyên khoa --</option>
                         </select>
@@ -19,7 +19,7 @@
 
                     <!-- Chọn bác sĩ -->
                     <div class="form-group mt-3">
-                        <label>Chọn bác sĩ</label>
+                        <label>Chọn bác sĩ  <span class="text-danger">*</span></label>
                         <select id="doctor" class="form-control">
                             <option value="">-- Chọn bác sĩ --</option>
                         </select>
@@ -27,13 +27,13 @@
 
                     <!-- Chọn ngày -->
                     <div class="form-group mt-3">
-                        <label>Chọn ngày khám</label>
-                        <input type="date" id="booking_date" class="form-control">
+                        <label>Chọn ngày khám  <span class="text-danger">*</span></label>
+                        <input id="booking_date" class="form-control"  autocomplete="off">
                     </div>
 
                     <!-- Chọn giờ -->
                     <div class="form-group mt-3">
-                        <label>Chọn khung giờ</label>
+                        <label>Chọn khung giờ  <span class="text-danger">*</span></label>
                         <select id="time_slot" class="form-control">
                             <option value="">-- Chọn giờ khám --</option>
                         </select>
@@ -58,7 +58,7 @@
                             <button id="confirm-booking" class="btn btn-success w-100 mt-4">XÁC NHẬN ĐẶT LỊCH</button>
                         </div>  
                 </div>
-                <div class="booking-step-3 d-none" style="text-align:center;">
+                <!-- <div class="booking-step-3 d-none" style="text-align:center;">
                     <img src="../images/check.png" width="120">
                     <h3 class="mt-3">Đặt lịch thành công!</h3>
                     <p>Vui lòng thanh toán.</p>
@@ -66,14 +66,15 @@
                     <button onclick="location.href='index.php?nav=thanhtoan'" class="btn btn-primary w-100 mt-4">
                         THANH TOÁN NGAY
                     </button>
-                </div>
+                </div> -->
 
             </div>
         </div>
     </main>
 </div>
 <div id="toast-container"></div>
-
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
 const SESSION_USER_ID = <?php echo json_encode($_SESSION["user_id"]); ?>;
 
@@ -149,51 +150,66 @@ document.getElementById("specialty").addEventListener("change", function() {
 });
 
 let scheduleData = [];
+let fp; // flatpickr instance
+
 
 document.getElementById("doctor").addEventListener("change", function() {
-    let id = this.value;
+    const doctorId = this.value;
+    const dateInput = document.getElementById("booking_date");
+    const timeSlot = document.getElementById("time_slot");
 
-    document.getElementById("booking_date").value = "";
-    document.getElementById("time_slot").innerHTML = `<option value="">-- Chọn giờ khám --</option>`;
+    // Reset input ngày và giờ
+    dateInput.value = "";
+    timeSlot.innerHTML = `<option value="">-- Chọn giờ khám --</option>`;
 
-    if(id === "") return;
+    if (!doctorId) return;
 
-    fetch(`http://localhost/Medical-appointment/source/models/doctor_service/DoctorAPI.php/doctor/schedule?doctor_id=${id}`)
+    // Fetch lịch bác sĩ
+    fetch(`http://localhost/Medical-appointment/source/models/doctor_service/DoctorAPI.php/doctor/schedule?doctor_id=${doctorId}`)
         .then(res => res.json())
         .then(data => {
             scheduleData = data;
 
-            // Lấy danh sách ngày
-            let dates = [...new Set(data.map(item => item.date))];
+            // Lấy danh sách ngày duy nhất
+            const availableDates = [...new Set(data.map(item => item.date))];
 
-            let dateInput = document.getElementById("booking_date");
-            dateInput.setAttribute("min", dates[0]);
-            dateInput.setAttribute("max", dates[dates.length - 1]);
+            // Destroy flatpickr cũ nếu có
+            if (fp) fp.destroy();
 
+            // Init flatpickr
+            fp = flatpickr(dateInput, {
+                dateFormat: "Y-m-d",
+                enable: availableDates,
+                onChange: function(selectedDates, dateStr) {
+                    // Reset giờ khám
+                    timeSlot.innerHTML = `<option value="">-- Chọn giờ khám --</option>`;
+
+                    // Lọc slot theo ngày
+                    const slots = scheduleData.filter(s => s.date === dateStr);
+
+                    const sessionMap = {
+                        morning: "Buổi sáng (06:30 - 11:30)",
+                        afternoon: "Buổi chiều (12:00 - 17:30)",
+                        evening: "Buổi tối (18:00 - 20:00)"
+                    };
+
+                    slots.forEach(s => {
+                        const text = sessionMap[s.session] || "Không xác định";
+                        const opt = document.createElement("option");
+                        opt.value = s.session;
+                        opt.textContent = text;
+                        timeSlot.appendChild(opt);
+                    });
+                }
+            });
         });
 });
-document.getElementById("booking_date").addEventListener("change", function() {
-    let date = this.value;
-    let slotSelect = document.getElementById("time_slot");
 
-    slotSelect.innerHTML = `<option value="">-- Chọn giờ khám --</option>`;
 
-    let slots = scheduleData.filter(s => s.date === date);
-
-    const sessionMap = {
-        morning: "Buổi sáng (06:30 - 11:30)",
-        afternoon: "Buổi chiều (12:00 - 17:30)",
-        evening: "Buổi tối (18:00 - 20:00)"
-    };
-
-    slots.forEach(s => {
-        let text = sessionMap[s.session] || "Không xác định";
-        slotSelect.innerHTML += `<option value="${s.session}">${text}</option>`;
-    });
-});
 document.getElementById("time_slot").addEventListener("change", function() {
     updateFee();
 });
+
 
 document.getElementById("confirm-booking").addEventListener("click", () => {
 
@@ -201,7 +217,6 @@ document.getElementById("confirm-booking").addEventListener("click", () => {
         alert("Vui lòng chọn hồ sơ bệnh nhân!");
         return;
     }
-
 
     const payload = {
         specialization_id: document.getElementById("specialty").value,
@@ -225,7 +240,6 @@ document.getElementById("confirm-booking").addEventListener("click", () => {
     .then(r => {
         if (r.status === "success") {
             alert("Booking created! ID: " + r.booking_id);
-            chuyengiaodien('booking-step-2', 'booking-step-3');
         } else {
             alert("Error: " + r.message);
         }})

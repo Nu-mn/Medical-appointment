@@ -200,7 +200,13 @@ function openDetail(id) {
     document.getElementById("detail_full_name").innerText = data.full_name ?? "";
     document.getElementById("detail_patient_id").innerText = data.patient_id;
     document.getElementById("detail_date_of_birth").innerText = data.date_of_birth ?? "";
-    document.getElementById("detail_gender").innerText = data.gender ?? "";
+    const genderMap = {
+        male: "Nam",
+        female: "Nữ",
+        other: "Khác"
+    };
+
+    document.getElementById("detail_gender").innerText = genderMap[data.gender] ?? "";
     document.getElementById("detail_email").innerText = data.email ?? "";
     document.getElementById("detail_phone").innerText = data.phone ?? "";
     document.getElementById("detail_address").innerText = data.address ?? "";
