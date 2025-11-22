@@ -40,7 +40,7 @@ class BookingService {
 
         // i = int, d = double, s = string
         $stmt->bind_param(
-            "iiiidss",
+            "iiiisds",
             $user_id,
             $patient_id,
             $doctor_id,
