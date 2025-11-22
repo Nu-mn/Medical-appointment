@@ -1,3 +1,46 @@
+<?php
+
+
+
+// Hàm gửi POST request
+function execPostRequest($url, $data) {
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+    $result = curl_exec($ch);
+    curl_close($ch);
+    return json_decode($result, true);
+}
+
+// ===== LẤY DỮ LIỆU GET TỪ URL =====
+$resultCode = $_GET['resultCode'] ?? null;
+parse_str($_GET['extraData'] ?? '', $extra);
+$payment_id = $extra['payment_id'] ?? null;
+parse_str($_GET['orderInfo'] ?? '', $extra);
+$booking_id = $extra['booking_id'] ?? null;
+
+
+
+
+// ===== GỬI KẾT QUẢ SANG PAYMENT API ĐỂ LƯU DATABASE =====
+$apiUrl = "http://localhost/Medical-appointment/source/models/payment_service/PaymentAPI.php/payments/result";
+
+$postData = [
+    'result_code' => $resultCode,
+    'payment_id' => $payment_id,
+    'booking_id' => $booking_id
+];
+
+$response = execPostRequest($apiUrl, $postData);
+
+?>
+
+
+
+
+
 <style>
 body { font-family: Arial, sans-serif; background: #DBEEFD; margin: 0; }
 h1 { text-align: center; color: #2f3640; margin: 20px; }
@@ -25,7 +68,7 @@ h1 { text-align: center; color: #2f3640; margin: 20px; }
 
 <script>
 const invoiceList = document.getElementById("invoiceList");
-const userId = <?php echo isset($user_id) ? json_encode($user_id) : 1; ?>;
+const userId =  <?php echo json_encode($_SESSION["user_id"]); ?>;
 
 if (!userId) {
     invoiceList.innerHTML = `<div class="empty-message">Người dùng chưa đăng nhập</div>`;
@@ -50,7 +93,6 @@ if (!userId) {
 
             // Xác định class trạng thái
             let statusClass = inv.status === "Thành công" ? "status-success" : "status-failed";
-            let stt = inv.num_order ? inv.num_order : "";
             card.innerHTML = `
                 <div class="invoice-header">
                     <div>Mã phiếu: ${inv.invoice_id}</div>
@@ -59,7 +101,6 @@ if (!userId) {
                 <div class="invoice-patient">${inv.patient_name}</div>
                 <div class="invoice-hospital">BỆNH VIỆN ĐẠI HỌC TÔN ĐỨC THẮNG</div>
                 <div class="invoice-details">
-                    <div>STT: ${stt}</div>
                     <div>Chuyên khoa: ${inv.specialization_name}</div>
                     <div>Phí khám: ${parseFloat(inv.fee).toLocaleString()} VNĐ</div>
                 </div>
@@ -75,4 +116,6 @@ if (!userId) {
 </script>
 
 </body>
+
+
 

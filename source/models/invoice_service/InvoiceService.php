@@ -7,12 +7,12 @@ class InvoiceService {
     }
 
     // Tạo phiếu khám 
-    public function createInvoice($bookingId, $paymentId, $userId, $fee, $specializationName, $patientName, $numOrder, $status) {
+    public function createInvoice($bookingId, $paymentId, $userId, $fee, $specializationName, $patientName, $status) {
         $stmt = $this->conn->prepare("
             INSERT INTO invoices 
-                (booking_id, payment_id, user_id, fee, specialization_name, patient_name, num_order, status)
+                (booking_id, payment_id, user_id, fee, specialization_name, patient_name, status)
             VALUES 
-                (?, ?, ?, ?, ?, ?, ?, ?)
+                (?, ?, ?, ?, ?, ?, ?)
         ");
 
         if (!$stmt) {
@@ -20,14 +20,13 @@ class InvoiceService {
         }
 
         $stmt->bind_param(
-            "iiisssis",
+            "iiissss",
             $bookingId,
             $paymentId,
             $userId,
             $fee,
             $specializationName,
             $patientName,
-            $numOrder,
             $status
         );
 
@@ -63,5 +62,22 @@ class InvoiceService {
 
         return $invoices;
     }
+
+    public function updateInvoiceStatus($invoice_id, $status) {
+        $stmt = $this->conn->prepare("
+            UPDATE invoices
+            SET status = ?
+            WHERE invoice_id = ?
+        ");
+
+        if (!$stmt) return false;
+
+        $stmt->bind_param("si", $status, $invoice_id);
+        $ok = $stmt->execute();
+        $stmt->close();
+
+        return $ok;
+}
+
 }
 ?>

@@ -39,6 +39,10 @@ if ($result['success']) {
 
     $_SESSION["user_id"] = $result["user"]["user_id"];
     $_SESSION["phone"] = $result["user"]["phone"];
+    $_SESSION["email"] = $result["user"]["email"];
+    $_SESSION["username"] = $result["user"]["username"];
+
+     file_put_contents("debug.txt", "Session:\n" . print_r($_SESSION, true) . "\n", FILE_APPEND);
 
 
     echo json_encode([

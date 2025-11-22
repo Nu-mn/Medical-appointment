@@ -22,19 +22,7 @@ SET time_zone = "+00:00";
 --
 
 -- --------------------------------------------------------
-CREATE TABLE `appointments` (
-  `booking_id ` int(11) NOT NULL,
-  `balance` decimal(12,0) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
---
--- Dumping data for table `account`
---
-
-INSERT INTO `account` (`user_id`, `balance`) VALUES
-(1, 15000000),
-(2, 1000000),
-(3, 6000000);
 
 
 -- --------------------------------------------------------
@@ -48,10 +36,11 @@ CREATE TABLE `payments` (
   `booking_id` INT(11) NOT NULL,
   `amount` DECIMAL(10,2) NOT NULL,
   `status` enum('unpaid','paid') NOT NULL DEFAULT 'unpaid',
+  `result_code` VARCHAR(10) DEFAULT NULL,
   `payment_method` VARCHAR(50) NOT NULL,
   `provider_transaction_id` VARCHAR(255),
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 --
@@ -64,8 +53,7 @@ CREATE TABLE `payments` (
 ALTER TABLE `payments`
   ADD PRIMARY KEY (`payment_id`);
 
-ALTER TABLE `payments`
-  ADD CONSTRAINT `fk_payments_booking` FOREIGN KEY (`booking_id`) REFERENCES `appointments`(`booking_id`)
+
 
 ALTER TABLE `payments`
   MODIFY `payment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;

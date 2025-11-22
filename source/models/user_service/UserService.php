@@ -37,7 +37,7 @@ class UserService {
 
     // Đăng nhập
     public function login($phone, $password) {
-    $stmt = $this->conn->prepare("SELECT user_id, phone 
+    $stmt = $this->conn->prepare("SELECT user_id, phone, email, username
                                   FROM users 
                                   WHERE phone = ? AND password = ?"
                                 );
@@ -49,6 +49,7 @@ class UserService {
         return [
             "success" => true,
             "user" => $user
+            
         ];
     } else {
         return [

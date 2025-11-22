@@ -33,6 +33,9 @@
             <div class="detail-value phone"></div>
         </div>
 
+        <!-- THANH TOÁN MOMO -->
+
+
 
     </div>
 </div>
@@ -41,7 +44,7 @@
 window.addEventListener("DOMContentLoaded", () => { // Đảm bảo DOM load xong
     const user_id = <?= (int)$_SESSION['user_id'] ?>; // khai báo 1 lần duy nhất
 
-    fetch("http://localhost/medical-appointment/source/models/user_service/UserAPI.php/users/" + user_id)
+    fetch("http://localhost/Medical-appointment/source/models/user_service/UserAPI.php/users/" + user_id)
         .then(res => res.json())
         .then(data => {
             if (data.error) return console.error("API Error:", data.error);

@@ -55,7 +55,9 @@
                        <!-- Action Buttons -->
                         <div class="actions col-12 mt-3 d-flex justify-content-between">
                             <button type="button" class="btn btn-secondary w-100 mt-4" onclick="chuyengiaodien('booking-step-2', 'booking-step-1')">Quay lại</button> 
-                            <button id="confirm-booking" class="btn btn-success w-100 mt-4">XÁC NHẬN ĐẶT LỊCH</button>
+                            
+
+                            <button id="payUrl" class="btn btn-success w-100 mt-4">XÁC NHẬN ĐẶT LỊCH</button>
                         </div>  
                 </div>
                 <!-- <div class="booking-step-3 d-none" style="text-align:center;">
@@ -210,7 +212,7 @@ document.getElementById("time_slot").addEventListener("change", function() {
     updateFee();
 });
 
-document.getElementById("confirm-booking").addEventListener("click", () => {
+document.getElementById("payUrl").addEventListener("click", () => {
 
     if (!data.patient_id) {
         alert("Vui lòng chọn hồ sơ bệnh nhân!");
@@ -232,7 +234,7 @@ document.getElementById("confirm-booking").addEventListener("click", () => {
     return;
     }
 
-    fetch("http://localhost/medical-appointment/source/models/booking_service/BookingAPI.php", {
+    fetch("http://localhost/Medical-appointment/source/models/booking_service/BookingAPI.php", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -249,15 +251,28 @@ document.getElementById("confirm-booking").addEventListener("click", () => {
     .then(r => {
         if (r.status === "success") {
             alert("Booking created! ID: " + r.booking_id);
+
+            // POST sang thanhtoan.php
+            const form = document.createElement("form");
+            form.method = "POST";
+            form.action = "pages/main/content/thanhtoan.php";
+
+            const bookingInput = document.createElement("input");
+            bookingInput.type = "hidden";
+            bookingInput.name = "booking_id";
+            bookingInput.value = r.booking_id;
+            form.appendChild(bookingInput);
+
+            document.body.appendChild(form);
+            form.submit();
         } else {
             alert("Error: " + r.message);
-        }})
+        }
+    })
     .catch(err => {
         console.error("Fetch error:", err);
     });
-
 });
-
 function updateFee() {
     let session = document.getElementById("time_slot").value;
 

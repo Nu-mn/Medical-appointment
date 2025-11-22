@@ -52,14 +52,25 @@ switch ($method) {
             break;
         }
 
+        // LẤY TÊN CHUYÊN KHOA THEO ID
+// Endpoint: /specialization/name
+        if (str_ends_with($path, "/specialization/name") && isset($_GET['specialization_id'])) {
+            echo json_encode([
+                "specialization_id" => $_GET['specialization_id'],
+                "name" => $service->getSpecializationNameById($_GET['specialization_id'])
+            ]);
+            break;
+        }
+
+
+
         echo json_encode(["error" => "Không có route phù hợp"]);
         break;
 
     case 'POST':
 
         // ĐẶT LỊCH – giảm slot
-        // Endpoint: /doctor/book
-        if (str_ends_with($path, "/doctor/book") && isset($input['doctor_id'], $input['date'], $input['session'])) {
+          if (str_ends_with($path, "/doctor/book") && isset($input['doctor_id'], $input['date'], $input['session'])) {
             $result = $service->bookSlot($input['doctor_id'], $input['date'], $input['session']);
             echo json_encode($result);
             break;
@@ -68,6 +79,7 @@ switch ($method) {
         http_response_code(400);
         echo json_encode(["error" => "Thiếu dữ liệu"]);
         break;
+
 
 
     default:

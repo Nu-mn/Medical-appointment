@@ -1,5 +1,14 @@
 Array
 (
-    [phone] => 0901234567
+    [phone] => 0923456789
     [password] => user123
 )
+Session:
+Array
+(
+    [user_id] => 3
+    [phone] => 0923456789
+    [email] => levanc@example.com
+    [username] => user3
+)
+

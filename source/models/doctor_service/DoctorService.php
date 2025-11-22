@@ -10,7 +10,8 @@ class DoctorService {
     public function getDoctorsBySpecialization($specialization_id) {
         $sql = "
             SELECT 
-                d.*, 
+                d.*,
+                s.name AS specialization_name,
                 s.amount AS specialty_fee
             FROM doctors d
             JOIN specializations s ON d.specialization_id = s.specialization_id
@@ -114,5 +115,23 @@ class DoctorService {
         $stmt->close();
         return $specializations;
     }
+
+    public function getSpecializationNameById($specialization_id) {
+    $stmt = $this->conn->prepare("SELECT name FROM specializations WHERE specialization_id = ?");
+    if (!$stmt) return null;
+
+    // SỬA: dùng đúng biến $specialization_id
+    $stmt->bind_param("i", $specialization_id);
+
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $row = $result->fetch_assoc();
+    $stmt->close();
+
+    return $row ? $row['name'] : null;
+}
+
+
 }
 ?>

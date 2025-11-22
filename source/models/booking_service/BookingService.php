@@ -40,7 +40,7 @@ class BookingService {
 
         // i = int, d = double, s = string
         $stmt->bind_param(
-            "iiiidss",
+            "iiiisds",
             $user_id,
             $patient_id,
             $doctor_id,
@@ -60,7 +60,7 @@ class BookingService {
 
     // Lấy appointment theo booking_id
     public function getById($booking_id) {
-        $sql = "SELECT booking_id, patient_id, doctor_id, specialization_id,
+        $sql = "SELECT booking_id, user_id, patient_id, doctor_id, specialization_id,
                        booking_date, amount, slot_time, created_at
                 FROM {$this->table}
                 WHERE booking_id = ?";
