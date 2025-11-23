@@ -25,7 +25,7 @@ h1 { text-align: center; color: #2f3640; margin: 20px; }
 
 <script>
 const invoiceList = document.getElementById("invoiceList");
-const userId = <?php echo isset($user_id) ? json_encode($user_id) : 1; ?>;
+const userId = <?php $_SESSION['user_id'] ? $_SESSION['user_id'] : null; ?>;
 
 if (!userId) {
     invoiceList.innerHTML = `<div class="empty-message">Người dùng chưa đăng nhập</div>`;
