@@ -63,7 +63,7 @@ if (str_ends_with($path, "/payments/create") && $method === "POST") {
         'fee' => $amount,
         'specialization_name' => $doctorData['name'] ?? '',
         'patient_name' => $patientData['full_name'] ?? '',
-        'status' => 'Thành công'
+        'status' => 'Đang xử lý'
     ];
 
     $ch = curl_init("http://localhost/Medical-appointment/source/models/invoice_service/InvoiceAPI.php/invoice/create");
@@ -109,67 +109,8 @@ if (str_ends_with($path, "/payments/result") && $method === "POST") {
     $stmt->execute();
     $stmt->close();
 
-    // 2️⃣ Nếu thanh toán thành công → update invoice, gửi mail, giảm slot
-    if ($result_code === "0") {
-        // Xác nhận payment
-        $paymentStatus = $paymentService->confirmPayments($payment_id, null);
 
-        if (!isset($paymentStatus['success']) || $paymentStatus['success'] !== true) {
-            echo json_encode(["error" => "Thanh toán không thành công, trạng thái unpaid"]);
-            exit;
-        }
-
-// 2️⃣ Lấy invoice_id dựa trên payment_id
-    $invoiceRes = file_get_contents("http://localhost/Medical-appointment/source/models/invoice_service/InvoiceAPI.php/invoice/by_payment?payment_id=" . $payment_id);
-    $invoiceData = json_decode($invoiceRes, true);
-    $invoice_id = $invoiceData['invoice_id'] ?? null;
-
-    if (!$invoice_id) {
-        echo json_encode(["error" => "Không tìm thấy invoice từ payment_id"]);
-        exit;
-    }
-
-    // 3️⃣ Xác định trạng thái mới của invoice
-    
-
-    // 4️⃣ Gọi PUT để update invoice
-    $updateData = [
-        "invoice_id" => $invoice_id,
-        "status" => "Thành công"
-    ];
-
-  $ch = curl_init("http://localhost/Medical-appointment/source/models/invoice_service/InvoiceAPI.php/invoice/update");
-
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
-curl_setopt($ch, CURLOPT_HTTPHEADER, [
-    'Content-Type: application/json'
-]);
-curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($updateData));
-
-$updateRes = curl_exec($ch);
-$curlErr = curl_error($ch);
-curl_close($ch);
- // Lấy lỗi curl nếu có
-    
-
-$updateResData = json_decode($updateRes, true);
-
-$invoiceRes = file_get_contents(
-        "http://localhost/Medical-appointment/source/models/invoice_service/InvoiceAPI.php/invoice/by_payment?payment_id=" . $payment_id
-    );
-    $invoiceData = json_decode($invoiceRes, true);
-
- file_put_contents(__DIR__ . '/debug_payment_invoice.txt', 
-        date('Y-m-d H:i:s') 
-        . " - UPDATE DATA: " . json_encode($updateData) 
-        . "\nResponse: $updateRes\nCurl Error: $curlErr\n", 
-        FILE_APPEND
-    );   
-
-
-
-        // Lấy thông tin booking
+    // Lấy thông tin booking
     $bookingRes = file_get_contents("http://localhost/Medical-appointment/source/models/booking_service/BookingAPI.php?booking_id=" . $booking_id);
     $bookingData = json_decode($bookingRes, true);
     $booking = $bookingData['data'] ?? null;
@@ -179,156 +120,227 @@ $invoiceRes = file_get_contents(
         exit;
     }
 
-    // 3️⃣ Lấy thông tin patient
-    $patientRes = file_get_contents("http://localhost/Medical-appointment/source/models/patient_service/PatientAPI.php?id=" . $booking['patient_id']);
-    $patientData = json_decode($patientRes, true);
+    // Lấy invoice_id dựa trên payment_id, trước khi kiểm tra result_code
+    $invoiceRes = file_get_contents("http://localhost/Medical-appointment/source/models/invoice_service/InvoiceAPI.php/invoice/by_payment?payment_id=" . $payment_id);
+    $invoiceData = json_decode($invoiceRes, true);
+    $invoice_id = $invoiceData['invoice_id'] ?? null;
 
-    // 4️⃣ Lấy thông tin doctor
-    $doctorRes = file_get_contents("http://localhost/Medical-appointment/source/models/doctor_service/DoctorAPI.php/specialization/name?specialization_id=" . $booking['specialization_id']);
-    $doctorData = json_decode($doctorRes, true);
+    if (!$invoice_id) {
+        echo json_encode(["error" => "Không tìm thấy invoice từ payment_id"]);
+        exit;
+    }
+
+    // 2️⃣ Nếu thanh toán thành công → update invoice, gửi mail, giảm slot
+    if ($result_code === "0") {
+        // Xác nhận payment
+        $paymentStatus = $paymentService->confirmPayments($payment_id, null);
+
+        if (!isset($paymentStatus['success']) || $paymentStatus['success'] !== true) {
+            echo json_encode(["error" => "Thanh toán không thành công, trạng thái unpaid"]);
+            exit;
+        }
+            
+
+            // 4️⃣ Gọi PUT để update invoice
+            $updateData = [
+                "invoice_id" => $invoice_id,
+                "status" => "Thành công"
+            ];
+
+        $ch = curl_init("http://localhost/Medical-appointment/source/models/invoice_service/InvoiceAPI.php/invoice/update");
+
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Content-Type: application/json'
+        ]);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($updateData));
+
+        $updateRes = curl_exec($ch);
+        $curlErr = curl_error($ch);
+        curl_close($ch);
+        // Lấy lỗi curl nếu có
+            
+
+        $updateResData = json_decode($updateRes, true);
+
+        $invoiceRes = file_get_contents(
+                "http://localhost/Medical-appointment/source/models/invoice_service/InvoiceAPI.php/invoice/by_payment?payment_id=" . $payment_id
+            );
+            $invoiceData = json_decode($invoiceRes, true);
+
+        file_put_contents(__DIR__ . '/debug_payment_invoice.txt', 
+                date('Y-m-d H:i:s') 
+                . " - UPDATE DATA: " . json_encode($updateData) 
+                . "\nResponse: $updateRes\nCurl Error: $curlErr\n", 
+                FILE_APPEND
+            );   
 
 
-   
+        // 3️⃣ Lấy thông tin patient
+        $patientRes = file_get_contents("http://localhost/Medical-appointment/source/models/patient_service/PatientAPI.php?id=" . $booking['patient_id']);
+        $patientData = json_decode($patientRes, true);
 
-    // 7️⃣ Gửi email thông báo
-    $notifyUrl = "http://localhost/Medical-appointment/source/models/notification_service/NotifyAPI.php/notify/email";
-    $payload = [
-        "user_id" => $booking['user_id'],
-        "to" => $patientData["email"] ?? "",
-        "subject" => ($paymentStatus['success'] ?? false) ? "Thanh toán lịch hẹn thành công" : "Thanh toán thất bại",
-        "body" => '
-<div style="font-family: Arial, sans-serif; background:#f7f7f7; padding:20px;">
-    <div style="
-        max-width:600px; 
-        margin:auto; 
-        background:white; 
-        padding:20px; 
-        border-radius:10px; 
-        box-shadow:0 0 10px rgba(0,0,0,0.1);
-    ">
+        // 4️⃣ Lấy thông tin doctor
+        $doctorRes = file_get_contents("http://localhost/Medical-appointment/source/models/doctor_service/DoctorAPI.php/specialization/name?specialization_id=" . $booking['specialization_id']);
+        $doctorData = json_decode($doctorRes, true);
 
-        <h2 style="text-align:center; color:#2a9d8f; margin-bottom:10px;">
-            🎉 Thanh toán lịch hẹn thành công
-        </h2>
 
-        <p style="font-size:16px; color:#333;">
-            Xin chào <strong>' . ($patientData['full_name'] ?? '') . '</strong>,
-        </p>
+    
 
-        <p style="font-size:15px; color:#444; line-height:1.6;">
-            Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi. Dưới đây là thông tin chi tiết cuộc hẹn:
-        </p>
-
+        // 7️⃣ Gửi email thông báo
+        $notifyUrl = "http://localhost/Medical-appointment/source/models/notification_service/NotifyAPI.php/notify/email";
+        $payload = [
+            "user_id" => $booking['user_id'],
+            "to" => $patientData["email"] ?? "",
+            "subject" => ($paymentStatus['success'] ?? false) ? "Thanh toán lịch hẹn thành công" : "Thanh toán thất bại",
+            "body" => '
+    <div style="font-family: Arial, sans-serif; background:#f7f7f7; padding:20px;">
         <div style="
-            background:#f1f1f1; 
-            padding:15px; 
-            border-radius:8px; 
-            margin: 20px 0;
-            font-size:14px;
-            color:#333;
+            max-width:600px; 
+            margin:auto; 
+            background:white; 
+            padding:20px; 
+            border-radius:10px; 
+            box-shadow:0 0 10px rgba(0,0,0,0.1);
         ">
-            <p><strong>Ngày sinh:</strong> ' . ($patientData['date_of_birth'] ?? '') . '</p>
-            <p><strong>Giới tính:</strong> ' . ($patientData['gender'] ?? '') . '</p>
-            <p><strong>Số điện thoại:</strong> ' . ($patientData['phone'] ?? '') . '</p>
-            <p><strong>CCCD/CMND:</strong> ' . ($patientData['citizen_id'] ?? '') . '</p>
-            <p><strong>Địa chỉ:</strong> ' . ($patientData['address'] ?? '') . '</p>
+
+            <h2 style="text-align:center; color:#2a9d8f; margin-bottom:10px;">
+                🎉 Thanh toán lịch hẹn thành công
+            </h2>
+
+            <p style="font-size:16px; color:#333;">
+                Xin chào <strong>' . ($patientData['full_name'] ?? '') . '</strong>,
+            </p>
+
+            <p style="font-size:15px; color:#444; line-height:1.6;">
+                Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi. Dưới đây là thông tin chi tiết cuộc hẹn:
+            </p>
+
+            <div style="
+                background:#f1f1f1; 
+                padding:15px; 
+                border-radius:8px; 
+                margin: 20px 0;
+                font-size:14px;
+                color:#333;
+            ">
+                <p><strong>Ngày sinh:</strong> ' . ($patientData['date_of_birth'] ?? '') . '</p>
+                <p><strong>Giới tính:</strong> ' . ($patientData['gender'] ?? '') . '</p>
+                <p><strong>Số điện thoại:</strong> ' . ($patientData['phone'] ?? '') . '</p>
+                <p><strong>CCCD/CMND:</strong> ' . ($patientData['citizen_id'] ?? '') . '</p>
+                <p><strong>Địa chỉ:</strong> ' . ($patientData['address'] ?? '') . '</p>
+            </div>
+
+            <h3 style="color:#e76f51; margin-bottom:10px;">Thông tin đặt khám</h3>
+
+            <table style="width:100%; border-collapse:collapse; font-size:15px; margin-bottom:20px;">
+                <tr>
+                    <td style="padding:8px; border-bottom:1px solid #ddd;"><strong>Booking ID:</strong></td>
+                    <td style="padding:8px; border-bottom:1px solid #ddd;">' . $booking_id . '</td>
+                </tr>
+                <tr>
+                    <td style="padding:8px; border-bottom:1px solid #ddd;"><strong>Chuyên khoa:</strong></td>
+                    <td style="padding:8px; border-bottom:1px solid #ddd;">' . ($doctorData['name'] ?? '') . '</td>
+                </tr>
+                <tr>
+                    <td style="padding:8px; border-bottom:1px solid #ddd;"><strong>Số tiền:</strong></td>
+                    <td style="padding:8px; border-bottom:1px solid #ddd;">' . number_format($booking['amount']) . ' VND</td>
+                </tr>
+                <tr>
+                    <td style="padding:8px; border-bottom:1px solid #ddd;"><strong>Ngày khám:</strong></td>
+                    <td style="padding:8px; border-bottom:1px solid #ddd;">' . $booking['booking_date'] . '</td>
+                </tr><tr>
+                    <td style="padding:8px; border-bottom:1px solid #ddd;"><strong>Giờ khám:</strong></td>
+                    <td style="padding:8px; border-bottom:1px solid #ddd;">' . $booking['slot_time'] . '</td>
+                </tr>
+
+            </table>
+
+            <p style="font-size:15px; color:#555; text-align:center;">
+                Nếu bạn có bất kỳ thắc mắc nào, hãy liên hệ với chúng tôi qua email hoặc số hotline.
+            </p>
+
+
+            <p style="font-size:14px; color:#aaa; text-align:center; margin-top:20px;">
+                &copy; 2025 Medical Appointment System
+            </p>
         </div>
-
-        <h3 style="color:#e76f51; margin-bottom:10px;">Thông tin đặt khám</h3>
-
-        <table style="width:100%; border-collapse:collapse; font-size:15px; margin-bottom:20px;">
-            <tr>
-                <td style="padding:8px; border-bottom:1px solid #ddd;"><strong>Booking ID:</strong></td>
-                <td style="padding:8px; border-bottom:1px solid #ddd;">' . $booking_id . '</td>
-            </tr>
-            <tr>
-                <td style="padding:8px; border-bottom:1px solid #ddd;"><strong>Chuyên khoa:</strong></td>
-                <td style="padding:8px; border-bottom:1px solid #ddd;">' . ($doctorData['name'] ?? '') . '</td>
-            </tr>
-            <tr>
-                <td style="padding:8px; border-bottom:1px solid #ddd;"><strong>Số tiền:</strong></td>
-                <td style="padding:8px; border-bottom:1px solid #ddd;">' . number_format($booking['amount']) . ' VND</td>
-            </tr>
-            <tr>
-                <td style="padding:8px; border-bottom:1px solid #ddd;"><strong>Ngày khám:</strong></td>
-                <td style="padding:8px; border-bottom:1px solid #ddd;">' . $booking['booking_date'] . '</td>
-            </tr><tr>
-                <td style="padding:8px; border-bottom:1px solid #ddd;"><strong>Giờ khám:</strong></td>
-                <td style="padding:8px; border-bottom:1px solid #ddd;">' . $booking['slot_time'] . '</td>
-            </tr>
-
-        </table>
-
-        <p style="font-size:15px; color:#555; text-align:center;">
-            Nếu bạn có bất kỳ thắc mắc nào, hãy liên hệ với chúng tôi qua email hoặc số hotline.
-        </p>
-
-
-        <p style="font-size:14px; color:#aaa; text-align:center; margin-top:20px;">
-            &copy; 2025 Medical Appointment System
-        </p>
     </div>
-</div>
-'
-        ,
-        "type" => ($paymentStatus['success'] ?? false) ? "payment_success" : "payment_failed",
-        "metadata" => ["payment_id" => $payment_id]
-    ];
-    file_get_contents($notifyUrl, false, stream_context_create([
-        "http" => [
-            "header" => "Content-Type: application/json\r\n",
-            "method" => "POST",
-            "content" => json_encode($payload)
-        ]
-    ]));
+    '
+            ,
+            "type" => ($paymentStatus['success'] ?? false) ? "payment_success" : "payment_failed",
+            "metadata" => ["payment_id" => $payment_id]
+        ];
+        file_get_contents($notifyUrl, false, stream_context_create([
+            "http" => [
+                "header" => "Content-Type: application/json\r\n",
+                "method" => "POST",
+                "content" => json_encode($payload)
+            ]
+        ]));
 
-    // 8️⃣ Giảm slot khám
-    $doctor_id = $booking['doctor_id'];
-    $date      = $booking['booking_date'];
-    $session   = $booking['slot_time'];
+      
 
-    $slotApiUrl = "http://localhost/Medical-appointment/source/models/doctor_service/DoctorAPI.php/doctor/book";
-    $slotPayload = json_encode([
-        "doctor_id" => $doctor_id,
-        "date"      => $date,
-        "session"   => $session
-    ]);
-
-    $slotCh = curl_init($slotApiUrl);
-    curl_setopt($slotCh, CURLOPT_CUSTOMREQUEST, "POST");
-    curl_setopt($slotCh, CURLOPT_POSTFIELDS, $slotPayload);
-    curl_setopt($slotCh, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($slotCh, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
-    $slotRes = curl_exec($slotCh);
-    curl_close($slotCh);
-    $slotResJson = json_decode($slotRes, true);
-    $slotStatus = isset($slotResJson['success']) && $slotResJson['success'] === true;
-
-    // 9️⃣ Trả kết quả JSON
-    echo json_encode([
-        'payment' => $payment,
-        'invoice' => $invoiceRes,
-        'invoice_update'=> $updateResData,
-        'payment_status' => $paymentStatus,
-        'slot_status' => $slotStatus,
-        'message' => 'Payment, invoice, email và slot đã xử lý xong'
-    ]);
-    exit;
+        // 9️⃣ Trả kết quả JSON
+        echo json_encode([
+            'payment' => $payment,
+            'invoice' => $invoiceRes,
+            'invoice_update'=> $updateResData,
+            'payment_status' => $paymentStatus,
+            // 'slot_status' => $slotStatus,
+            'message' => 'Payment, invoice, email và slot đã xử lý xong'
+        ]);
+        exit;
 
     } else {
         // 3️⃣ Thanh toán thất bại → chỉ cập nhật invoice = 'Thất bại'
-        $updateInvoiceSql = "UPDATE invoices SET status='Thất bại' WHERE payment_id=?";
-        $stmtInv = $conn->prepare($updateInvoiceSql);
-        $stmtInv->bind_param("i", $payment_id);
-        $stmtInv->execute();
-        $stmtInv->close();
+        $updateData = [
+                "invoice_id" => $invoice_id,
+                "status" => "Thất bại"
+            ];
 
-        echo json_encode([
-            'success'    => false,
-            'payment_id' => $payment_id,
-            'message'    => 'Thanh toán thất bại, invoice cập nhật thất bại'
+        $ch = curl_init("http://localhost/Medical-appointment/source/models/invoice_service/InvoiceAPI.php/invoice/update");
+
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Content-Type: application/json'
         ]);
-        exit;
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($updateData));
+
+        $updateRes = curl_exec($ch);
+        $curlErr = curl_error($ch);
+        curl_close($ch);
+
+        // 8️⃣ Tăng slot khám
+        $doctor_id = $booking['doctor_id'];
+        $date      = $booking['booking_date'];
+        $session   = $booking['slot_time'];
+
+        $slotApiUrl = "http://localhost/Medical-appointment/source/models/doctor_service/DoctorAPI.php/doctor/book";
+
+        // Tăng SLOT (change = +1)
+        $slotPayload = json_encode([
+            "doctor_id" => $doctor_id,
+            "date"      => $date,
+            "session"   => $session,
+            "change"    => +1
+        ]);
+
+        $slotCh = curl_init($slotApiUrl);
+        curl_setopt($slotCh, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($slotCh, CURLOPT_POSTFIELDS, $slotPayload);
+        curl_setopt($slotCh, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($slotCh, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+
+        $slotRes = curl_exec($slotCh);
+        curl_close($slotCh);
+
+        $slotResJson = json_decode($slotRes, true);
+
+        $slotStatus = isset($slotResJson['success']) && $slotResJson['success'] === true;
+
     }
 }
 ?>

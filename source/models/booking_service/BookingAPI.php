@@ -9,6 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit();
 }
+
 // Bảo trì
 define('MAINTENANCE_MODE', false); // bật/tắt bảo trì
 if (MAINTENANCE_MODE) {
@@ -34,11 +35,10 @@ $input = json_decode(file_get_contents("php://input"), true);
 
 try {
     switch ($method) {
-        case 'POST':  // Tạo mới booking
+        case 'POST':  // Tạo mới booking theo microservice
             if (!$input) {
                 $input = $_POST;  // fallback nếu gọi từ form
             }
-
 
             $required = [
                 'user_id',
@@ -61,9 +61,60 @@ try {
                 }
             }
 
+            // =============================
+            // 1️⃣ Gọi DoctorService để giảm slot (-1)
+            // =============================
+            $slotPayload = [
+                'doctor_id' => $input['doctor_id'],
+                'date'      => $input['booking_date'],
+                'session'   => $input['slot_time'],
+                'change'    => -1
+            ];
+
+            $slotCh = curl_init("http://localhost/Medical-appointment/source/models/doctor_service/DoctorAPI.php/doctor/book");
+            curl_setopt($slotCh, CURLOPT_CUSTOMREQUEST, "POST");
+            curl_setopt($slotCh, CURLOPT_POSTFIELDS, json_encode($slotPayload));
+            curl_setopt($slotCh, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($slotCh, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+            $slotRes = curl_exec($slotCh);
+            curl_close($slotCh);
+
+            $slotResJson = json_decode($slotRes, true);
+
+            if (!$slotResJson['success'] ?? false) {
+                http_response_code(400);
+                echo json_encode([
+                    'status'  => 'error',
+                    'message' => 'Không thể đặt lịch: ' . ($slotResJson['message'] ?? 'Slot API lỗi')
+                ]);
+                exit;
+            }
+            
+
+            // =============================
+            // 2️⃣ Tạo booking (BookingService)
+            // =============================
             $booking_id = $bookingService->create($input);
 
             if (!$booking_id) {
+                // =============================
+                // rollback slot nếu tạo booking thất bại
+                // =============================
+                $rollbackPayload = [
+                    'doctor_id' => $input['doctor_id'],
+                    'date'      => $input['booking_date'],
+                    'session'   => $input['slot_time'],
+                    'change'    => +1
+                ];
+
+                $rollbackCh = curl_init("http://localhost/Medical-appointment/source/models/doctor_service/DoctorAPI.php/doctor/book");
+                curl_setopt($rollbackCh, CURLOPT_CUSTOMREQUEST, "POST");
+                curl_setopt($rollbackCh, CURLOPT_POSTFIELDS, json_encode($rollbackPayload));
+                curl_setopt($rollbackCh, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($rollbackCh, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+                curl_exec($rollbackCh);
+                curl_close($rollbackCh);
+
                 http_response_code(500);
                 echo json_encode([
                     'status'  => 'error',
@@ -77,6 +128,7 @@ try {
                 'booking_id' => $booking_id
             ]);
             break;
+
 
         case 'GET':   // lấy theo booking_id
             if (!isset($_GET['booking_id'])) {

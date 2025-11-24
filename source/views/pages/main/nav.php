@@ -30,7 +30,7 @@
                         <img id="nav-avatar" src = "../images/user.jpg" height = "30px"  width = "30px" alt = "Avatar">
                         <div class="infor">
                             <p id="user"></p>
-                            <p id="email_user"></p>
+                            <p id="email_user" style="font-size:12px !important"></p>
 
                         </div>
                     </a>

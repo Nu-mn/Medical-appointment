@@ -45,15 +45,17 @@ CREATE TABLE `patients` (
 --
 
 INSERT INTO `patients` (`patient_id`, `user_id`, `full_name`, `date_of_birth`, `gender`, `email`, `phone`, `address`, `citizen_id`, `insurance_number`) VALUES
-(6, 6, 'Tran Van A', '1990-01-01', 'male', 'bna@example.com', '0912345678', 'VIET KIEU', '123456789', 'BHXH001'),
-(7, 7, 'Peter Parker', '1987-04-10', 'other', 'peter.parker@example.com', '0967890123', '25 Lê Duẩn, Huế', '012345678907', 'BHXH007'),
-(8, 8, 'Sara KIEm', '1993-03-18', 'female', 'sara.phan@example.com', '0978901234', '100 Phan Xích Long, TP.HCM', '012345678908', 'BHXH008'),
-(9, 9, 'Tom Hardy', '2001-12-01', 'male', 'tom.hardy@example.com', '0989012345', '33 Hoàng Diệu, Đà Nẵng', '012345678909', 'BHXH009'),
-(10, 10, 'Emma Watson', '1985-06-25', 'female', 'emma.watson@example.com', '0990123456', '77 Trường Chinh, Hà Nội', '012345678910', 'BHXH010'),
-(11, 1, 'Le Thi My Hang', '1988-06-17', 'female', 'bna@example.com', '0912345678', 'Tan phong Quan 7 TpHCM', NULL, ''),
-(16, 1, 'Tom Hardy', '2001-12-01', 'female', 'trleehan09@gmail.com', '0989012345', '33 Hoàng Diệu, Đà Nẵng', '012345678909', ''),
-(19, 1, 'Tran Van A', '1990-01-01', 'male', 'bna@example.com', '0912345678', 'Ha Noi', '123456789', 'BHXH001'),
-(20, 1, 'Mỹ Diệu', '1999-01-07', 'female', 'diua.tran@example.com', '0956789012', '90 Quang Trung, Cần Thơ', '012345678906', 'BHXH006');
+-- User 1
+(1, 1, 'Nguyen Van A', '1990-01-01', 'male', 'a.nguyen@example.com', '0911111111', 'Ha Noi', '123456789001', 'BHXH001'),
+(2, 1, 'Tran Thi B', '1995-05-12', 'female', 'b.tran@example.com', '0922222222', 'Hai Phong', '123456789002', 'BHXH002'),
+
+-- User 2
+(3, 2, 'Le Van C', '1988-03-10', 'male', 'c.le@example.com', '0933333333', 'Da Nang', '123456789003', 'BHXH003'),
+(4, 2, 'Pham Thi D', '1992-09-20', 'female', 'd.pham@example.com', '0944444444', 'Hoi An', '123456789004', 'BHXH004'),
+
+-- User 3
+(5, 3, 'Hoang Van E', '2000-12-05', 'male', 'e.hoang@example.com', '0955555555', 'TP.HCM', '123456789005', 'BHXH005'),
+(6, 3, 'Vu Thi F', '1998-07-14', 'female', 'f.vu@example.com', '0966666666', 'Can Tho', '123456789006', 'BHXH006');
 
 --
 -- Indexes for dumped tables

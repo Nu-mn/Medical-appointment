@@ -232,10 +232,16 @@ function deletePatient() {
 
     showToast("Đang xử lý..", "info");
 
-    fetch("http://localhost/medical-appointment/source/models/patient_service/PatientAPI.php?id=" + id, {
+    fetch("http://localhost/medical-appointment/source/models/patient_service/PatientAPI.php?patient_id=" + id, {
         method: "DELETE"
     })
-    .then(res => res.json())
+    .then(res => {
+        if (res.status === 503) {
+            window.location.href = "/Medical-appointment/source/views/index.php?nav=404"; // dẫn tới trang bảo trì
+            return;
+        }
+        return res.json();
+    })
     .then(data => {
         if (data.message) {
             alert("Đã xóa thành công!");
@@ -308,6 +314,7 @@ function addPatient() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data)
     })
+    
     .then(async res => {
         const text = await res.text();
         console.log("RAW RESPONSE:", text);
@@ -338,12 +345,18 @@ function editPatient() {
         alert("Không tìm thấy ID bệnh nhân!");
         return;
     }
-     fetch("http://localhost/medical-appointment/source/models/patient_service/PatientAPI.php?id=" + patientId, {
+     fetch("http://localhost/medical-appointment/source/models/patient_service/PatientAPI.php?patient_id=" + patientId, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data)
     })
-    .then(res => res.json())
+    .then(res => {
+        if (res.status === 503) {
+            window.location.href = "/Medical-appointment/source/views/index.php?nav=404"; // dẫn tới trang bảo trì
+            return;
+        }
+        return res.json();
+    })
     .then(result => {
         if(result.message) {
             location.reload();
@@ -396,6 +409,49 @@ function clearAll(){
     }
 }
 
+
+document.addEventListener("DOMContentLoaded", () => {
+    // Fetch toàn bộ info bệnh nhân 
+    fetch("http://localhost/Medical-appointment/source/models/patient_service/PatientAPI.php?user_id=" +  SESSION_USER_ID + "&_=" + new Date().getTime())
+       .then(res => {
+            if (res.status === 503) {
+                window.location.href = location.origin + "/Medical-appointment/source/views/index.php?nav=404";
+                return;
+            }
+            return res.json();
+        })
+        .then(list => {
+            const container = document.getElementById("patientList");
+
+            list.forEach(p => {
+                patientCache[p.patient_id] = p; // Lưu cache
+
+                container.innerHTML += `
+                    <div class="col-md-6">
+                        <div class=" row patient-card">
+                        <div class="col-md-9">
+                            <div class=" p-3 mb-3 " onclick="openDetail(${p.patient_id})" style="cursor:pointer;">
+                                <div class="info">
+                                    <div class="name-line">
+                                        <strong>${p.full_name}</strong>
+                                        <span class="phone">${p.phone}</span>
+                                    </div>
+
+                                    <div class="detail">Ngày sinh: ${p.date_of_birth}</div>
+                                    <div class="detail">Địa chỉ: ${p.address}</div>
+                                </div>
+                            </div>
+                            </div>
+                              <div class="actions col-md-3">
+                                    <button class="btn btn-primary btn-chon" id="btn-${p.patient_id}" onclick="openDetail(${p.patient_id}, event)">Chọn</button>
+                                 </div>
+                        </div>
+                     
+                    </div>
+                `;
+            });
+        })
+        .catch(err => console.error("Lỗi tải danh sách:", err));
+});
 </script>
-<script src="../models/patient_service/getPatient.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

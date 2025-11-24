@@ -9,6 +9,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
+// Bảo trì
+define('MAINTENANCE_MODE', true); // bật/tắt bảo trì
+if (MAINTENANCE_MODE) {
+    http_response_code(503); // Service Unavailable
+    header("Content-Type: text/html; charset=UTF-8");
+    include __DIR__ . '/maintenance.php';
+    exit;
+}
+
 require_once __DIR__."/DoctorService.php";
 require_once __DIR__."/../../database/db.php"; // file trả về mysqli connection function connectDB()
 
@@ -69,15 +78,30 @@ switch ($method) {
 
     case 'POST':
 
-        // ĐẶT LỊCH – giảm slot
-          if (str_ends_with($path, "/doctor/book") && isset($input['doctor_id'], $input['date'], $input['session'])) {
-            $result = $service->bookSlot($input['doctor_id'], $input['date'], $input['session']);
+        // API: POST /doctor/book  (tăng/giảm slot)
+        if (str_ends_with($path, "/doctor/book")) {
+
+            // Kiểm tra đủ dữ liệu
+            if (!isset($input['doctor_id'], $input['date'], $input['session'], $input['change'])) {
+                http_response_code(400);
+                echo json_encode(["success" => false, "message" => "Thiếu dữ liệu"]);
+                break;
+            }
+
+            $doctor_id = $input['doctor_id'];
+            $date      = $input['date'];
+            $session   = $input['session'];
+            $change    = $input['change']; // +1 hoặc -1
+
+            // Gọi service update slot
+            $result = $service->updateSlot($doctor_id, $date, $session, $change);
+
             echo json_encode($result);
             break;
         }
 
         http_response_code(400);
-        echo json_encode(["error" => "Thiếu dữ liệu"]);
+        echo json_encode(["error" => "Route không hợp lệ"]);
         break;
 
 

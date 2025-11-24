@@ -2,6 +2,7 @@ var tensp=$("#product_id").val();
 var giabanle =  $("#soluong").val();
 var bool = true;
 
+let patientCache = {}; // RAM cache
 
 function errormessage(message,id){
     let error = document.getElementById(id)

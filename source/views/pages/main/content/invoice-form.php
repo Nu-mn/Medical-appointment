@@ -76,7 +76,7 @@ if (!userId) {
     fetch(`http://localhost/Medical-appointment/source/models/invoice_service/InvoiceAPI.php/invoice/history?user_id=${userId}`)
     .then(res => {
         if (res.status === 503) {
-            window.location.href = "/source/views/index.php?nav=404"; // dẫn tới trang bảo trì
+            window.location.href = "/Medical-appointment/source/views/index.php?nav=404"; // dẫn tới trang bảo trì
             return;
         }
         return res.json();

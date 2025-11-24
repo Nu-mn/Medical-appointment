@@ -45,7 +45,13 @@ window.addEventListener("DOMContentLoaded", () => { // Đảm bảo DOM load xon
     const user_id = <?= (int)$_SESSION['user_id'] ?>; // khai báo 1 lần duy nhất
 
     fetch("http://localhost/Medical-appointment/source/models/user_service/UserAPI.php/users/" + user_id)
-        .then(res => res.json())
+        .then(res => {
+            if (res.status === 503) {
+                window.location.href = "/Medical-appointment/source/views/index.php?nav=404"; // dẫn tới trang bảo trì
+                return;
+            }
+            return res.json();
+        })
         .then(data => {
             if (data.error) return console.error("API Error:", data.error);
 

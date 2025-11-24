@@ -85,19 +85,6 @@ let data = "";
 function openDetail(patient_id, event) {
     data = patientCache[patient_id];
 
-    // if (!data) return alert("Không tìm thấy dữ liệu!");
-    // document.getElementById("detail_full_name").innerText = data.full_name ?? "";
-    // document.getElementById("detail_patient_id").innerText = data.patient_id;
-    // document.getElementById("detail_date_of_birth").innerText = data.date_of_birth ?? "";
-    // document.getElementById("detail_gender").innerText = data.gender ?? "";
-    // document.getElementById("detail_email").innerText = data.email ?? "";
-    // document.getElementById("detail_phone").innerText = data.phone ?? "";
-    // document.getElementById("detail_address").innerText = data.address ?? "";
-    // document.getElementById("detail_citizen_id").innerText =
-    // data.citizen_id?.trim() || "Chưa cập nhật";
-    // document.getElementById("detail_insurance_number").innerText =
-    // data.insurance_number?.trim() || "Chưa cập nhật";
-
     // Nếu muốn chỉ 1 patient được chọn, bỏ chọn các nút khác
    const btn = document.getElementById(`btn-${patient_id}`);
 
@@ -117,7 +104,13 @@ function openDetail(patient_id, event) {
 // Load danh sách chuyên khoa
 function loadSpecializations() {
     fetch("http://localhost/medical-appointment/source/models/doctor_service/DoctorAPI.php/specializations")
-        .then(res => res.json())
+        .then(res => {
+            if (res.status === 503) {
+                window.location.href = "/Medical-appointment/source/views/index.php?nav=404"; // dẫn tới trang bảo trì
+                return;
+            }
+            return res.json();
+        })
         .then(data => {
             let select = document.getElementById("specialty");
             select.innerHTML = `<option value="">-- Chọn chuyên khoa --</option>`;
@@ -141,7 +134,13 @@ document.getElementById("specialty").addEventListener("change", function() {
     if(id === "") return;
 
     fetch(`http://localhost/Medical-appointment/source/models/doctor_service/DoctorAPI.php/doctor/by-specialization?specialization_id=${id}`)
-        .then(res => res.json())
+        .then(res => {
+            if (res.status === 503) {
+                window.location.href = "/Medical-appointment/source/views/index.php?nav=404"; // dẫn tới trang bảo trì
+                return;
+            }
+            return res.json();
+        })
         .then(data => {
             data.forEach(doc => {
                 doctorSelect.innerHTML += `<option value="${doc.doctor_id}">${doc.doctor_name}</option>`;
@@ -168,7 +167,13 @@ document.getElementById("doctor").addEventListener("change", function() {
 
     // Fetch lịch bác sĩ
     fetch(`http://localhost/Medical-appointment/source/models/doctor_service/DoctorAPI.php/doctor/schedule?doctor_id=${doctorId}`)
-        .then(res => res.json())
+        .then(res => {
+            if (res.status === 503) {
+                window.location.href = "/Medical-appointment/source/views/index.php?nav=404"; // dẫn tới trang bảo trì
+                return;
+            }
+            return res.json();
+        })
         .then(data => {
             scheduleData = data;
 
@@ -215,7 +220,7 @@ document.getElementById("time_slot").addEventListener("change", function() {
 document.getElementById("payUrl").addEventListener("click", () => {
 
     if (!data.patient_id) {
-        alert("Vui lòng chọn hồ sơ bệnh nhân!");
+        showToast("Vui lòng chọn hồ sơ bệnh nhân!", "warning");
         return;
     }
 
@@ -230,8 +235,8 @@ document.getElementById("payUrl").addEventListener("click", () => {
     };
 
     if (!payload.specialization_id || !payload.doctor_id || !payload.booking_date || !payload.slot_time) {
-    alert("Vui lòng điền đầy đủ thông tin trước khi đặt lịch!");
-    return;
+        showToast("Vui lòng chọn đủ thông tin trước khi đặt lịch!", "warning");
+        return;
     }
 
     fetch("http://localhost/Medical-appointment/source/models/booking_service/BookingAPI.php", {
@@ -243,7 +248,7 @@ document.getElementById("payUrl").addEventListener("click", () => {
     })
     .then(res => {
         if (res.status === 503) {
-            window.location.href = "/source/views/index.php?nav=404"; // dẫn tới trang bảo trì
+            window.location.href = "/Medical-appointment/source/views/index.php?nav=404"; // dẫn tới trang bảo trì
             return;
         }
         return res.json();
@@ -292,5 +297,47 @@ function updateFee() {
     document.getElementById("exam_fee").value = formatMoney(finalFee) + " VNĐ";
 }
 
+document.addEventListener("DOMContentLoaded", () => {
+    // Fetch toàn bộ info bệnh nhân 
+    fetch("http://localhost/Medical-appointment/source/models/patient_service/PatientAPI.php?user_id=" +  SESSION_USER_ID + "&_=" + new Date().getTime())
+       .then(res => {
+            if (res.status === 503) {
+                window.location.href = location.origin + "/Medical-appointment/source/views/index.php?nav=404";
+                return;
+            }
+            return res.json();
+        })
+        .then(list => {
+            const container = document.getElementById("patientList");
+
+            list.forEach(p => {
+                patientCache[p.patient_id] = p; // Lưu cache
+
+                container.innerHTML += `
+                    <div class="col-md-6">
+                        <div class=" row patient-card">
+                        <div class="col-md-9">
+                            <div class=" p-3 mb-3 " onclick="openDetail(${p.patient_id})" style="cursor:pointer;">
+                                <div class="info">
+                                    <div class="name-line">
+                                        <strong>${p.full_name}</strong>
+                                        <span class="phone">${p.phone}</span>
+                                    </div>
+
+                                    <div class="detail">Ngày sinh: ${p.date_of_birth}</div>
+                                    <div class="detail">Địa chỉ: ${p.address}</div>
+                                </div>
+                            </div>
+                            </div>
+                              <div class="actions col-md-3">
+                                    <button class="btn btn-primary btn-chon" id="btn-${p.patient_id}" onclick="openDetail(${p.patient_id}, event)">Chọn</button>
+                                 </div>
+                        </div>
+                     
+                    </div>
+                `;
+            });
+        })
+        .catch(err => console.error("Lỗi tải danh sách:", err));
+});
 </script>
-<script src="../models/patient_service/getPatient.js"></script>

@@ -5,7 +5,7 @@ header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE");
 header("Access-Control-Allow-Headers: Content-Type");
 
 // Bảo trì
-define('MAINTENANCE_MODE', false); // bật/tắt bảo trì
+define('MAINTENANCE_MODE', value: false); // bật/tắt bảo trì
 if (MAINTENANCE_MODE) {
     http_response_code(503); // Service Unavailable
     header("Content-Type: text/html; charset=UTF-8");
@@ -48,12 +48,12 @@ switch ($method) {
 
     /* === UPDATE === */
     case "PUT":
-        if (!isset($_GET["id"])) {
+        if (!isset($_GET["patient_id"])) {
             echo json_encode(["error" => "Missing ID"]);
             break;
         }
 
-        if ($service->update($_GET["id"], $input)) {
+        if ($service->update($_GET["patient_id"], $input)) {
             echo json_encode(["message" => "Patient updated"]);
         } else {
             echo json_encode(["error" => "Update failed"]);
@@ -62,12 +62,12 @@ switch ($method) {
 
     /* === DELETE === */
     case "DELETE":
-        if (!isset($_GET["id"])) {
+        if (!isset($_GET["patient_id"])) {
             echo json_encode(["error" => "Missing ID"]);
             break;
         }
 
-        if ($service->delete($_GET["id"])) {
+        if ($service->delete($_GET["patient_id"])) {
             echo json_encode(["message" => "Patient deleted"]);
         } else {
             echo json_encode(["error" => "Delete failed"]);
