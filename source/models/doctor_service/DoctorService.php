@@ -60,14 +60,18 @@ class DoctorService {
         return $schedules;
     }
 
-    // 3. Kiểm tra slot trống
-    public function checkSlot($doctor_id, $date, $session) {
+
+    // 4. Đặt lịch (giảm slot)
+    public function updateSlot($doctor_id, $date, $session, $change) {
+        // $change có thể là +1 hoặc -1
+
+        // 1. Lấy slot hiện tại
         $stmt = $this->conn->prepare("
-            SELECT available_slots 
+            SELECT schedule_id, available_slots 
             FROM doctor_schedule 
             WHERE doctor_id = ? AND date = ? AND session = ?
         ");
-        if (!$stmt) return false;
+        if (!$stmt) return ["success"=>false, "message"=>"Lỗi truy vấn"];
 
         $stmt->bind_param("iss", $doctor_id, $date, $session);
         $stmt->execute();
@@ -75,52 +79,31 @@ class DoctorService {
         $slot = $result->fetch_assoc();
         $stmt->close();
 
-        return $slot;
+        if (!$slot) return ["success"=>false, "message"=>"Slot không tồn tại"];
+
+        $newSlots = $slot['available_slots'] + $change;
+
+        // Không cho slot âm
+        if ($newSlots < 0) return ["success"=>false, "message"=>"Đã hết slot"];
+
+        // 2. Update slot
+        $update = $this->conn->prepare("
+            UPDATE doctor_schedule 
+            SET available_slots = ? 
+            WHERE schedule_id = ?
+        ");
+        if (!$update) return ["success"=>false, "message"=>"Lỗi update"];
+
+        $update->bind_param("ii", $newSlots, $slot['schedule_id']);
+        $ok = $update->execute();
+        $update->close();
+
+        return [
+            "success" => $ok,
+            "message" => $ok ? "Cập nhật slot thành công" : "Cập nhật slot thất bại",
+            "new_slots" => $newSlots
+        ];
     }
-
-    // 4. Đặt lịch (giảm slot)
-public function updateSlot($doctor_id, $date, $session, $change) {
-    // $change có thể là +1 hoặc -1
-
-    // 1. Lấy slot hiện tại
-    $stmt = $this->conn->prepare("
-        SELECT schedule_id, available_slots 
-        FROM doctor_schedule 
-        WHERE doctor_id = ? AND date = ? AND session = ?
-    ");
-    if (!$stmt) return ["success"=>false, "message"=>"Lỗi truy vấn"];
-
-    $stmt->bind_param("iss", $doctor_id, $date, $session);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $slot = $result->fetch_assoc();
-    $stmt->close();
-
-    if (!$slot) return ["success"=>false, "message"=>"Slot không tồn tại"];
-
-    $newSlots = $slot['available_slots'] + $change;
-
-    // Không cho slot âm
-    if ($newSlots < 0) return ["success"=>false, "message"=>"Đã hết slot"];
-
-    // 2. Update slot
-    $update = $this->conn->prepare("
-        UPDATE doctor_schedule 
-        SET available_slots = ? 
-        WHERE schedule_id = ?
-    ");
-    if (!$update) return ["success"=>false, "message"=>"Lỗi update"];
-
-    $update->bind_param("ii", $newSlots, $slot['schedule_id']);
-    $ok = $update->execute();
-    $update->close();
-
-    return [
-        "success" => $ok,
-        "message" => $ok ? "Cập nhật slot thành công" : "Cập nhật slot thất bại",
-        "new_slots" => $newSlots
-    ];
-}
 
 
     // Lấy danh sách chuyên khoa

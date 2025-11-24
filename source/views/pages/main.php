@@ -17,10 +17,11 @@
         } elseif ($nav == 'invoice') {
             include __DIR__ . "/main/content/invoice-form.php";
 
-        } elseif ($nav == 'doctors') {
-            include __DIR__ . "/main/content/doctors.php";
-
-        } elseif ($nav == 'patients') {
+        } 
+        // elseif ($nav == 'doctors') {
+        //     include __DIR__ . "/main/content/doctors.php";
+        // }
+         elseif ($nav == 'patients') {
             include __DIR__ . "/main/content/patients.php";
         } elseif ($nav == 'contact') {
             include __DIR__ . "/main/content/contact.php";

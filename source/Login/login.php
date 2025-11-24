@@ -75,6 +75,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 body: JSON.stringify({ phone, password })
             });
 
+             if (response.status === 503) {
+                // Server đang bảo trì
+                window.location.href = "/Medical-appointment/source/views/index.php?nav=404";
+                return;
+            }
+
             const data = await response.json();
 
             if (data.success) {

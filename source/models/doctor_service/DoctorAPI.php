@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 // Bảo trì
-define('MAINTENANCE_MODE', true); // bật/tắt bảo trì
+define('MAINTENANCE_MODE', false); // bật/tắt bảo trì
 if (MAINTENANCE_MODE) {
     http_response_code(503); // Service Unavailable
     header("Content-Type: text/html; charset=UTF-8");
@@ -46,13 +46,6 @@ switch ($method) {
             break;
         }
 
-        // KIỂM TRA SLOT CÒN HAY HẾT
-        // Endpoint: /doctor/check
-        if (str_ends_with($path, "/doctor/check") && isset($_GET['doctor_id'], $_GET['date'], $_GET['session'])) {
-            $available = $service->checkSlot($_GET['doctor_id'], $_GET['date'], $_GET['session']);
-            echo json_encode($available);
-            break;
-        }
 
         // LẤY TẤT CẢ CHUYÊN KHOA
         // Endpoint: /specializations

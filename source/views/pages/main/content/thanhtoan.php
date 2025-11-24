@@ -1,6 +1,14 @@
 <?php
 session_start();
 
+define('MAINTENANCE_MODE', true); // true = bật, false = tắt
+
+if (MAINTENANCE_MODE) {
+    // Chuyển hướng sang trang bảo trì
+    header("Location: /Medical-appointment/source/views/index.php?nav=404");
+    exit;
+}
+
 // Hàm POST request
 function execPostRequest($url, $data)
 {
@@ -29,7 +37,6 @@ $booking_id = $_POST['booking_id'];
 
 
 
-
 // Lấy thông tin booking từ BookingAPI
 $bookingRes = file_get_contents("http://localhost/Medical-appointment/source/models/booking_service/BookingAPI.php?booking_id=" . $booking_id);
 $bookingData = json_decode($bookingRes, true);
@@ -44,9 +51,6 @@ if (!isset($bookingData['data']['amount'])) {
 
 $user_id = (int)$bookingData['data']['user_id'];
 $amount = (int)$bookingData['data']['amount'];
-
-
-
 
 
 // Tạo payment trong PaymentAdiePI

@@ -79,6 +79,7 @@
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
 const SESSION_USER_ID = <?php echo json_encode($_SESSION["user_id"]); ?>;
+let patientCache = {}; // RAM cache
 
 let data = "";
 // Click chon patient

@@ -191,7 +191,7 @@ if (session_status() === PHP_SESSION_NONE) {
 <!-- Script preload patient -->
 <script>
 const SESSION_USER_ID = <?php echo json_encode($_SESSION["user_id"]); ?>;
-
+let patientCache = {}; // RAM cach
 let data = "";
 function openDetail(id) {
     data = patientCache[id];

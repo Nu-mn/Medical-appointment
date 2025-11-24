@@ -1,4 +1,13 @@
 <?php
+// Bảo trì
+define('MAINTENANCE_MODE', false); // bật/tắt bảo trì
+if (MAINTENANCE_MODE) {
+    http_response_code(503); // Service Unavailable
+    header("Content-Type: text/html; charset=UTF-8");
+    include __DIR__ . '/maintenance.php';
+    exit;
+}
+
 require_once __DIR__ . "/../database/db.php";
 require_once __DIR__ . "/../models/user_service/UserService.php";
 
